@@ -1,269 +1,136 @@
 # DESIGN.md
 
-Source of truth for all UI work. Based on the Webflow-style design spec supplied by the client/owner.
-`prompts/06-design-system.md` is superseded by this file wherever they disagree (notably: the five-stop accent palette instead of "one accent colour").
+Source of truth for all UI work. This replaces the earlier Webflow-style spec. The design language below (spring-mint, black, white, Titillium Web headlines, pill buttons, very round cards) is the client-supplied system.
 
-## Adaptation for Recon Desk (product UI, not marketing)
+## Adaptation for Recon Desk (product UI)
 
-- **Primary CTA is always `primary` near-black.** Chromatic accents are never button backgrounds.
-- **Semantic status mapping:** auto / success = `accent-green`, review / warning = `accent-yellow`, unmatched / open / error = `accent-red`, info = `accent-blue-info`.
-- **Soft badges:** accent at ~12% fill with a darkened ink variant of the same hue for text (AA contrast). Solid fills are reserved for category cards.
-- **Category cards** (purple/pink/blue/orange/green) are used on the dashboard/landing for Orders, Payments, Returns, Refunds, Discrepancies, not for actions.
-- **Font:** Inter (variable, weights 400/500/550/600, `ss01`) substitutes WF Visual Sans. Mono: DM Mono / Inconsolata for references, IDs and amounts in tables (tabular figures).
-- **Money:** right-aligned, tabular numerals, rupee symbol, 2 decimals.
-- **App surface:** the signed-in app sits on `app` (#fafafa) with white (`canvas`) cards and hairline borders so panels lift without shadows; the marketing page stays on pure white.
-- **Hero numbers:** the headline money figure uses `card-feature-dark` (near-black) at display size; claim types use the accent category cards, which are links and never buttons.
-- **No dead buttons**, every list has loading / empty / error states, mobile-first (touch targets >= 44px).
+- **Token naming:** the spec's `primary` (spring-mint #00f0a0) is `mint` in code. Our Tailwind `primary` is ink black (#000), because most "primary" classes mean the black CTA fill.
+- **Mint band as page background:** the signed-in app sits on `canvas-mint` (#ecffe0) with white cards, so panels lift off the wash. Dense data tables always sit on white.
+- **One accent:** mint owns the logo, the active nav item, highlights, the money-at-risk figure on black, and the one signature mint pill, which is **Run matching**. Everything else is black pills, white pills or hairline controls.
+- **Status colours are data, not chrome:** finance needs red / amber / blue to mark problems. They appear only as small status badges, difference figures and chart segments, never as buttons, bands or card fills. Soft tint (about 12%) with a darker text variant for AA contrast. Settled uses mint.
+- **No claim-type colour cards:** claim types use white feature cards with a mint icon chip.
+- **No fabricated social proof:** no testimonials or user counts. The black quote band carries a product principle instead.
+- **Typography:** Titillium Web for display and headings (700), Inter for everything else. Numbers use tabular figures; money is right-aligned.
+- **Rules that still apply:** no dead buttons, every list has loading / empty / error states, mobile-first, touch targets >= 44px.
 
 ---
 
 ## Overview
 
-Webflow positions itself as the visual web development platform — the marketing surface reads as a confident professional product, not a tech startup. The default page is a generous white canvas (`{colors.canvas}`) with a deep near-black `{colors.primary}` (`#080808`) for the brand's primary CTA, typography, and ink. Around this restrained primary, the brand layers a five-stop chromatic accent system — `{colors.accent-purple}` `#7a3dff`, `{colors.accent-pink}` `#ed52cb`, `{colors.accent-blue}` `#3b89ff`, `{colors.accent-orange}` `#ff6b00`, `{colors.accent-green}` `#00d722` — each mapped to one of the platform's product categories (design, CMS, hosting, ecommerce, etc.). These accents appear as full-card fills inside the product-category grid, not as button colours; the brand's primary CTA stays near-black.
+Jobright is the marketing site of an AI job-hunting platform, and its design radiates startup energy. The system is anchored by a single electric accent — a spring-mint green (`primary` #00f0a0) — set against crisp black (`ink`) and white (`canvas`). The signature move is a pale-mint section band (`canvas-mint` #ecffe0) that carries most of the page: heroes, feature blocks, FAQ, and the closing CTA all sit on this soft green wash, punctuated by full-black bands for the scrolling ticker and a featured quote.
 
-Type carries the second decisive voice. The proprietary `WF Visual Sans Variable` family carries every display, body, and label role at weight 500 / 600 — the brand never goes heavier than semibold, never lighter than regular. Hero display sits at 80 px / weight 600 / `-0.8 px` tracking — confident but not shouting. Uppercase eyebrows in 15 px weight 500 with `1.5 px` positive tracking mark every section header.
+The type system pairs a bold, slightly condensed Titillium Web (`display`) for big confident headlines with a clean Inter (`body-md`) for UI and body copy. Headlines run large and heavy; body stays light and readable. The overall feel is friendly and high-energy rather than corporate — rounded product-mockup cards and generous whitespace keep it approachable.
 
-The shape system is restrained. Buttons take a tight `{rounded.sm}` 4 px radius — neither pill nor square; the brand reads as engineered. Cards step up to `{rounded.md}` 8 px. Pill (`{rounded.full}` 9999 px) is reserved for circular icon containers. Layered drop-shadows on featured cards add modest elevation but never feel material-heavy.
+The CTA system is built on high-contrast pill buttons. Primary actions use a **black pill** (ink fill, white label) at a large 28px radius; the brand's signature accent button is a **mint-green pill** (primary fill, black label, thin black border) at a rounder 36px. Product features are demonstrated in white mockup cards with pronounced 40px asymmetric corners, floating over the mint bands. Elevation is light — a hairline or a whisper-soft shadow, never heavy blur.
 
-**Key Characteristics:**
-- A two-colour conversion hierarchy — `{colors.primary}` near-black for every primary CTA, white-on-hairline for every secondary. Chromatic accents are used as full surface fills on category cards, never as button backgrounds.
-- The brand's signature is its **five-stop chromatic category palette**: purple / pink / blue / orange / green, each tied to a product surface. Used at full saturation as card fills.
-- Hero typography at 80 px weight 600 with `-0.8 px` tracking — restrained, confident, never billboard-loud.
-- WF Visual Sans Variable is the single family; the brand uses no separate sans for body / display. WFVisualSans-Mono / Inconsolata appears only for technical captions.
-- Tight `{rounded.sm}` 4 px button geometry; cards at `{rounded.md}` 8 px. The brand never uses pill CTAs.
-- Layered multi-offset drop-shadows on featured cards — the brand's only elevation cue.
+**Key characteristics**
+- A single electric accent: spring-mint owns the logo, links, the signature green pill, and every highlight.
+- Pale-mint section bands carry the page rhythm, alternating with white and full-black bands.
+- Dual pill-button system: black pills for primary CTAs, a mint-green pill for the signature accent action.
+- Bold Titillium Web display type over a light, clean Inter body.
+- Rounded product-mockup cards with a distinctive 40px asymmetric corner, floating over the mint bands.
+- Page rhythm (marketing): mint hero → mint stats → white content → black ticker → alternating mint feature bands → black featured quote → mint FAQ → mint CTA → white footer.
 
 ## Colors
 
-### Brand & Accent
-- **Ink Black** (`{colors.primary}` — `#080808`): The brand's primary conversion colour. Every primary CTA, every heading, every wordmark. Deeper than pure black to read as branded.
-- **Accent Purple** (`{colors.accent-purple}` — `#7a3dff`): One of the five chromatic category accents — used for design / build product surfaces.
-- **Accent Pink** (`{colors.accent-pink}` — `#ed52cb`): Magenta accent — used for animation / interaction product surfaces.
-- **Accent Blue** (`{colors.accent-blue}` — `#3b89ff`): Bright cyan-blue — used for SEO / analytics product surfaces.
-- **Accent Blue Deep** (`{colors.accent-blue-deep}` — `#006acc`): The deeper blue used for emphasis links.
-- **Accent Blue Info** (`{colors.accent-blue-info}` — `#146ef5`): The badge-info blue.
-- **Accent Orange** (`{colors.accent-orange}` — `#ff6b00`): Used for hosting / infrastructure product surfaces.
-- **Accent Green** (`{colors.accent-green}` — `#00d722`): Used for ecommerce / status-success surfaces.
-- **Accent Yellow** (`{colors.accent-yellow}` — `#ffae13`): Used for warning / collaboration product surfaces.
-- **Accent Red** (`{colors.accent-red}` — `#ee1d36`): Used for error / destructive states.
+### Brand & accent
+- **Spring Mint** (`primary` #00f0a0): logo mark, links, the signature green pill, score highlights, inline emphasis.
+- **On-Primary** (#000000): black label on top of the mint button.
 
 ### Surface
-- **Canvas** (`{colors.canvas}` — `#ffffff`): The default page background.
-- **Hairline** (`{colors.hairline}` — `#d8d8d8`): 1 px solid borders — input borders, card chrome, divider lines.
+- **Canvas** #ffffff: default page and card background.
+- **Mint Canvas** `canvas-mint` #ecffe0: the dominant section surface. Warm spring-mint; never cool or blue-shift it.
+- **Soft Surface** `surface-soft` #f2f4f5: inset panels and inputs.
+- **Hairline** #e5e7eb: 1px card and divider borders.
 
 ### Text
-- **Ink** (`{colors.ink}` — `#080808`): Default text and headings.
-- **Ink Strong** (`{colors.ink-strong}` — `#222222`): Near-black emphasis.
-- **Body** (`{colors.body}` — `#363636`): Default body paragraph color.
-- **Body Mid** (`{colors.body-mid}` — `#5a5a5a`): Mid-emphasis secondary text — footer lines, captions.
-- **Mute** (`{colors.mute}` — `#898989`): Lower-priority text.
-- **Mute Soft** (`{colors.mute-soft}` — `#ababab`): The lightest text role — placeholder text, fine print.
-
-### Semantic
-- **Info Blue** (`{colors.accent-blue-info}` — `#146ef5`): Info badge / notification.
-- **Success Green** (`{colors.accent-green}` — `#00d722`): Success indicators.
-- **Warning Yellow** (`{colors.accent-yellow}` — `#ffae13`): Warning states.
-- **Error Red** (`{colors.accent-red}` — `#ee1d36`): Validation / destructive.
+- **Ink** #000000: headings, body text, fill of every black pill and dark band.
+- **Muted** `muted` #86909c: secondary text, captions, footer links.
+- **On Dark** #ffffff: text on black bands.
 
 ## Typography
 
-### Font Family
-A single proprietary family carries every typographic role: **WF Visual Sans Variable** (with `Arial` system fallback). Weights 400 / 500 / 550 / 600 are present; the brand never uses 700 / 800 / 900. A monospace variant — **WFVisualSans-Mono** with `Inconsolata` fallback — handles rare technical caption moments and code-style labels. OpenType features `"ss02"`, `"ss10"`, `"zero"` are enabled in the mono variant for the styled zero glyph.
+Two families: **Titillium Web** (bold, slightly condensed) for every display headline and section title; **Inter** for body, UI labels, buttons and captions. Both are open-source Google fonts.
 
-### Hierarchy
-
-| Token | Size | Weight | Line Height | Letter Spacing | Use |
+| Token | Size | Weight | Line height | Letter spacing | Use |
 |---|---|---|---|---|---|
-| `{typography.display-xxl}` | 80px | 600 | 83.2px | -0.8px | Hero headline. |
-| `{typography.display-xl}` | 56px | 600 | 58.24px | 0 | Sub-hero displays. |
-| `{typography.display-lg}` | 44.8px | 600 | 46.6px | 0 | Section headlines. |
-| `{typography.display-md}` | 32px | 500 | 41.6px | 0 | Card-cluster headlines. |
-| `{typography.display-sm}` | 24px | 500 | 31.2px | 0 | Sub-section displays. |
-| `{typography.display-xs}` | 20px | 500 | 28px | 0 | Inline display micro-headings. |
-| `{typography.eyebrow-uppercase}` | 15px | 500 | 19.5px | 1.5px | UPPERCASE eyebrow tags above sections. |
-| `{typography.eyebrow-uppercase-sm}` | 12px | 500 | 12px | 0.6px | Small uppercase metadata. |
-| `{typography.body-lg}` | 28.8px | 400 | 46.08px | -0.288px | Lead paragraphs. |
-| `{typography.body-md}` | 16px | 400 | 25.6px | -0.16px | Default body. |
-| `{typography.body-md-strong}` | 16px | 500 | 25.6px | -0.16px | Bolded inline body. |
-| `{typography.body-sm}` | 14px | 400 | 22.4px | 0 | Secondary body. |
-| `{typography.body-sm-strong}` | 14px | 500 | 22.4px | 0 | Bold caption / nav-link. |
-| `{typography.caption}` | 12.8px | 550 | 15.36px | 0 | Badge labels (the brand's signature 550 weight). |
-| `{typography.caption-mono}` | 12px | 400 | 18px | 0 | Mono code captions. |
-| `{typography.button-md}` | 16px | 500 | 25.6px | -0.16px | Button labels. |
+| `display` | 80px | 700 | 1.05 | -1px | Largest hero / section headline (Titillium Web) |
+| `heading-1` | 60px | 700 | 1.1 | -0.5px | Primary section headings |
+| `heading-2` | 48px | 700 | 1.15 | 0 | Feature-band headings |
+| `heading-3` | 38px | 700 | 1.2 | 0 | Stat numbers, sub-headings |
+| `heading-4` | 32px | 600 | 1.25 | 0 | Card titles, quotes |
+| `body-lg` | 18px | 300 | 1.6 | 0 | Lead paragraphs (Inter light) |
+| `body-md` | 16px | 500 | 1.6 | 0 | Default body (Inter) |
+| `body-sm` | 14px | 500 | 1.5 | 0 | Dense body, ticker, footer |
+| `button` | 16px | 600 | 1 | 0 | Button labels |
+| `nav-link` | 14px | 600 | 1.4 | 0 | Nav links |
+| `caption` | 13px | 500 | 1.4 | 0 | Fine print, metadata |
 
-### Principles
-- **Weight ceiling at 600.** The brand never uses 700+. Confident, not loud.
-- **Negative tracking at display sizes.** `-0.8 px` at 80 px, scaling through. Tight kerning is part of the voice.
-- **Uppercase eyebrows mark every section.** 15 px / weight 500 / `1.5 px` positive tracking is the brand's signature label style.
-- **Single family across the system.** No separate display vs body face. The variable axes do the work.
-
-### Note on Font Substitutes
-WF Visual Sans Variable is proprietary. Open-source substitutes:
-- **Display + body** — *Inter* weights 400 / 500 / 600 with `font-feature-settings: "ss01"` enabled is the closest stylistic match.
-- **Mono** — *Inconsolata* (the documented fallback) or *DM Mono*.
+Headlines are big, heavy and condensed; body copy stays light and roomy. Never set body copy in Titillium Web or headlines in Inter.
 
 ## Layout
 
-### Spacing System
-- **Base unit**: 4 px (with frequent 0.4 / 0.8 sub-multiples for fine padding).
-- **Tokens**: `{spacing.xxs}` 2 px · `{spacing.xs}` 4 px · `{spacing.sm}` 8 px · `{spacing.md}` 12 px · `{spacing.lg}` 16 px · `{spacing.xl}` 20 px · `{spacing.2xl}` 24 px · `{spacing.3xl}` 32 px.
-- **Section padding**: hero / content bands use `{spacing.3xl}` 32 px gutters with generous vertical spacing.
-- **Card interior padding**: feature and pricing cards sit at `{spacing.3xl}` 32 px.
+- Base unit 8px. Spacing tokens: xxs 4 · xs 8 · sm 12 · md 16 · lg 24 · xl 32 · xxl 48 · section 96.
+- Content is centred in a ~1200px container. Feature blocks run as two-column rows (copy + CTA / mockup card), alternating sides and stacking on narrow screens.
+- Breakpoints: Mobile < 576 (single column, hamburger, pills full-width) · Tablet 576–991 · Laptop 992–1199 · Desktop >= 1200.
+- Whitespace is generous and band-driven.
 
-### Grid & Container
-- Marketing container is wide (effectively edge-to-edge with `{spacing.3xl}` gutters).
-- Category card grid: 2 / 3-up at desktop with mixed sizing (some larger feature cards span 2 columns).
-- Pricing tier grid: 3-up at desktop, 1-up at mobile.
-
-### Responsive Strategy
-
-#### Breakpoints
-
-| Name | Width | Key Changes |
-|---|---|---|
-| Mobile | < 479px | Hero stacks; all grids 1-up. |
-| Mobile-Large | 479–767px | Same as Mobile. |
-| Tablet | 768–991px | 2-up grids. |
-| Desktop | ≥ 992px | Full multi-up grids. |
-
-#### Touch Targets
-Buttons render at ~44 px (12 px vertical padding + 25.6 px line-height). WCAG AAA met.
-
-#### Collapsing Strategy
-- Nav: full link row at desktop. Hamburger at mobile.
-- Category card grid: 2 / 3 / 4-up at desktop, drops to 1-up at mobile.
-- Pricing tier: 3 / 4-up at desktop, 1-up at mobile.
-
-#### Image Behavior
-- Category cards: full-bleed solid colour fills (no photography).
-- Product screenshots: 16:9 inside `{rounded.md}` card chrome.
-- No portrait imagery in the marketing surface.
-
-## Elevation & Depth
+## Elevation
 
 | Level | Treatment | Use |
 |---|---|---|
-| Level 0 — Flat | No shadow, no border. | Default bands. |
-| Level 1 — Hairline | 1 px solid `{colors.hairline}` border on `{colors.canvas}`. | Default card chrome and input borders. |
-| Level 2 — Layered Drop | Multi-stop layered shadow with subtle warm offsets — `0 84px 24px rgba(0,0,0,0), 0 54px 22px rgba(0,0,0,0.01), 0 30px 18px rgba(0,0,0,0.04), 0 13px 13px rgba(0,0,0,0.08), 0 3px 7px rgba(0,0,0,0.09)`. | Featured cards needing visible lift. |
-| Level 3 — Layered Drop Strong | Deeper version of Level 2 with `0.12` final offset opacity. | Pricing / modal-level emphasis. |
-| Level 4 — Heavy Modal | Extremely heavy multi-stop — `0 24px 24px rgba(0,0,0,0.26), 0 6px 13px rgba(0,0,0,0.29)` final stops. | Modal / dialog surfaces. |
+| 0 Flat | 1px hairline or none | Bands, list rows, inputs |
+| 1 Hairline | 0.5px inset rgba(0,0,0,.5) | Bordered chips, outlined controls |
+| 2 Soft float | whisper-soft drop shadow | Mockup cards floating over mint bands |
 
-### Decorative Depth
-- The chromatic category cards (full-saturation purple / pink / blue / orange / green fills) provide visual depth through pure colour contrast against the white canvas.
-- Layered shadow recipes are the brand's only true atmospheric effect — they're 5-stop drop-shadow stacks with very low individual opacities.
+No gradient system. Depth comes from band contrast and rounded cards.
 
 ## Shapes
 
-### Border Radius Scale
-
 | Token | Value | Use |
 |---|---|---|
-| `{rounded.none}` | 0px | Full-bleed bands. |
-| `{rounded.xs}` | 2px | Tight inline pills. |
-| `{rounded.sm}` | 4px | The brand's canonical button + badge + small-element radius. |
-| `{rounded.md}` | 8px | Card chrome and feature / category cards. |
-| `{rounded.full}` | 9999px | Circular icon containers only. |
+| `sm` | 12px | Square dark button, small chips, inputs |
+| `md` | 16px | Cards, tab lists |
+| `lg` | 24px | Content cards, panels |
+| `pill-lg` | 28px | Primary black CTA pill |
+| `pill-nav` | 18px | Compact nav pill |
+| `pill` | 36px | Signature mint pill |
+| `card` | 40px | Product-mockup feature cards (asymmetric: one sharp corner) |
+| `full` | 9999px | Avatars, score rings, badges, search bar |
 
 ## Components
 
-### Buttons
-
-**`button-primary`** — the canonical near-black CTA.
-- Background `{colors.primary}` (`#080808`), text `{colors.on-primary}` white, label `{typography.button-md}` (16 px weight 500), padding `{spacing.md} {spacing.xl}`, shape `{rounded.sm}` 4 px.
-
-**`button-secondary`** — the white outline CTA.
-- Background `{colors.canvas}`, text `{colors.ink}`, 1 px solid `{colors.hairline}` border, same typography + padding + shape.
-
-**`button-text-arrow`** — the underlined text-link CTA with arrow used in long-form sections.
-- Background `{colors.canvas}`, text `{colors.ink}`, no border, body in `{typography.button-md}`, padding `{spacing.xl}` 0.
-
-**`button-icon-circular`** — the circular icon button for carousel controls.
-- Background `{colors.canvas}`, ink icon, shape `{rounded.full}`.
-
-### Cards & Containers
-
-**`card-feature`** — the canonical feature card on canvas.
-- Background `{colors.canvas}`, text `{colors.ink}`, 1 px solid `{colors.hairline}`, padding `{spacing.3xl}`, shape `{rounded.md}`. Often elevated to Level 2 shadow when featured.
-
-**`card-feature-dark`** — the polarity-flipped feature card on near-black.
-- Background `{colors.primary}`, text `{colors.on-primary}`, padding `{spacing.3xl}`, shape `{rounded.md}`.
-
-**`card-pricing`** — the pricing-tier card.
-- Background `{colors.canvas}`, text `{colors.ink}`, hairline border, padding `{spacing.3xl}`, shape `{rounded.md}`. Layered shadow on the featured tier.
-
-### Inputs & Forms
-
-**`text-input`** — the canonical text input.
-- Background `{colors.canvas}`, text `{colors.ink}`, 1 px solid `{colors.hairline}`, body in `{typography.body-md}`, padding `{spacing.md} {spacing.lg}`, shape `{rounded.sm}`.
-
-### Navigation
-
-**`nav-bar`** — the sticky top nav.
-- Background `{colors.canvas}`, text `{colors.ink}`, padding `{spacing.lg} {spacing.3xl}`.
-
-**`nav-link`** — link items inside `nav-bar`.
-- Text `{colors.ink}`, set in `{typography.body-sm-strong}`.
-
-**`footer`** — the footer band.
-- Background `{colors.canvas}`, text `{colors.body-mid}`, padding `{spacing.3xl} {spacing.3xl}`. Body in `{typography.body-sm}`.
-
-### Signature Components
-
-**`hero-band`** — the white hero band.
-- Background `{colors.canvas}`, text `{colors.ink}`, padding `{spacing.3xl} {spacing.3xl}`. Headline in `{typography.display-xxl}` (80 px weight 600).
-
-**`hero-band-dark`** — the polarity-flipped near-black hero band (used on some campaign pages).
-- Background `{colors.primary}`, text `{colors.on-primary}`, same padding / headline scale.
-
-**`content-band`** — the standard content band on canvas.
-- Background `{colors.canvas}`, text `{colors.ink}`, padding `{spacing.3xl} {spacing.3xl}`. Section headline in `{typography.display-lg}`.
-
-**`category-card-purple`** — full-fill purple category card.
-- Background `{colors.accent-purple}`, text white, padding `{spacing.3xl}`, shape `{rounded.md}`.
-
-**`category-card-pink`** — full-fill pink category card.
-- Background `{colors.accent-pink}`, text white, padding `{spacing.3xl}`, shape `{rounded.md}`.
-
-**`category-card-blue`** — full-fill blue category card.
-- Background `{colors.accent-blue}`, text white, padding `{spacing.3xl}`, shape `{rounded.md}`.
-
-**`category-card-orange`** — full-fill orange category card.
-- Background `{colors.accent-orange}`, text white, padding `{spacing.3xl}`, shape `{rounded.md}`.
-
-**`category-card-green`** — full-fill green category card (uses ink text for legibility against the lighter green).
-- Background `{colors.accent-green}`, text `{colors.primary}` (ink), padding `{spacing.3xl}`, shape `{rounded.md}`.
-
-**`badge-info`** + **`badge-info-soft`** — info badges in solid blue or soft outline.
-- Filled: bg `{colors.accent-blue-info}` text white. Soft: bg canvas, text `{colors.accent-blue-info}`. Both at `{typography.caption}` (12.8 px weight 550) — the brand's signature 550-weight caption.
-
-### Examples (illustrative)
-
-Each `ex-*` entry references brand-native primitives so surfaces re-skin consistently.
-
-- **`ex-pricing-tier`** — feature-card chrome on canvas-soft surface.
-- **`ex-pricing-tier-featured`** — polarity-flipped surface (dark fill + light text).
-- **`ex-product-selector`** — summary card. Props: `backgroundColor`, `rounded`, `padding`.
-- **`ex-cart-drawer`** — line-item summary. Props: `backgroundColor`, `rounded`, `padding`, `item-divider`.
-- **`ex-app-shell-row`** — sidebar nav row; active state uses brand primary as the indicator.
-- **`ex-data-table-cell`** — th + td chrome. Header uses mono-caps eyebrow typography; body uses body-sm.
-- **`ex-auth-form-card`** — sign-in card; feature-card chrome with text-input primitives.
-- **`ex-modal-card`** — feature-card chrome with elevated shadow.
-- **`ex-empty-state-card`** — empty-state frame with caption typography.
-- **`ex-toast`** — feature-card shape + medium shadow.
+- **button-primary:** black pill, white label, 16/600, rounded 28px, wide padding.
+- **button-primary-sm:** compact black nav pill ("Sign in"/"Join").
+- **button-green:** mint fill, black label, 1px black border, rounded 36px. The one signature accent action.
+- **button-dark-square:** black, 12px radius, utility.
+- **feature-card:** white, rounded 40px (one sharp corner), padding 24, soft float shadow over mint.
+- **testimonial/content card:** white, 1px hairline, rounded 24px, padding 24.
+- **score-ring:** white circle, mint value, Titillium 32/600.
+- **text-input:** white, 1px hairline, rounded 12px, padding 12/16.
+- **nav-bar:** white, ink links 14/600, black pill CTA on the right.
+- **hero:** mint band, black display headline, black pill CTA, rounded white mockup.
+- **stat-item:** big black Titillium number over a caption.
+- **ticker:** full-width black band, white 14/500 text, continuously scrolling, mint marks.
+- **feature-band:** mint band, 48px headline, copy + black pill one side, mockup card other side.
+- **dark quote band:** black band, white 32/600 quote.
+- **faq-item:** on mint, hairline divider, plus/expand toggle.
+- **cta-band:** mint band, 48px headline, mint pill.
 
 ## Do's and Don'ts
 
-### Do
-- Reserve `{colors.primary}` (`#080808`) for every primary CTA, every heading, and every wordmark. Near-black is the conversion colour.
-- Use the five chromatic accents (purple / pink / blue / orange / green) as full-fill category cards, NOT as button backgrounds.
-- Set hero headlines in `{typography.display-xxl}` weight 600 with `-0.8 px` tracking.
-- Pair the proprietary WF Visual Sans family across every typographic role.
-- Use `{rounded.sm}` 4 px for buttons, `{rounded.md}` 8 px for cards. The brand never uses pill CTAs.
-- Use layered multi-stop drop-shadows on featured cards — the brand's distinctive elevation recipe.
+**Do**
+- Reserve mint for the logo, links, the signature pill and highlights.
+- Carry rhythm on the mint band, alternating with white and black bands.
+- Use black pills for primary CTAs and the mint pill for the one signature accent action.
+- Pair heavy Titillium headlines with light Inter body.
+- Float mockup cards on soft shadows over the mint bands.
+- Keep buttons pill-shaped and high-contrast (black-on-mint, white-on-black).
 
-### Don't
-- Don't promote button-medium weight to 700+. The brand's weight ceiling is 600.
-- Don't use chromatic accents as button backgrounds. They're surface fills, not actions.
-- Don't render CTAs as pills. The brand's button geometry is tight 4 px rectangle.
-- Don't introduce a sixth accent colour. The 5-stop palette is the system.
+**Don't**
+- Don't introduce extra brand colours as chrome. Status colours are for data only (see adaptation).
+- Don't fill the everyday primary CTA with mint; the everyday primary is the black pill.
+- Don't set body copy in Titillium Web or headlines in Inter.
+- Don't put heavy shadows on cards.
+- Don't cool or blue-shift the mint bands.
+- Don't square off the pills or the mockup cards.
