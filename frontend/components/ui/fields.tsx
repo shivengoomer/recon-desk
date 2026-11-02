@@ -1,15 +1,29 @@
 import { cn } from "@/lib/cn";
+import { ChevronDown } from "lucide-react";
 import { useId, type SelectHTMLAttributes } from "react";
 
 export function Select({ label, className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement> & { label: string }) {
   const id = useId();
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
-      <label htmlFor={id} className="text-eyebrow-sm uppercase text-body-mid">{label}</label>
-      <select id={id} {...rest}
-        className={cn("min-h-11 w-full rounded-sm border border-hairline bg-canvas px-3 text-body-sm text-ink focus:border-ink", className)}>
-        {children}
-      </select>
+      <label htmlFor={id} className="text-body-sm font-semibold text-ink">{label}</label>
+      <div className="relative">
+        <select
+          id={id}
+          {...rest}
+          className={cn(
+            "min-h-11 w-full appearance-none rounded-sm border border-hairline bg-canvas pl-3.5 pr-10 text-body-sm text-ink transition-colors focus:border-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
+            className
+          )}
+        >
+          {children}
+        </select>
+        <ChevronDown
+          size={16}
+          className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-mute"
+          aria-hidden
+        />
+      </div>
     </div>
   );
 }

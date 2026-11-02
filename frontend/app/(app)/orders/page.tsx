@@ -1,6 +1,7 @@
 "use client";
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Drawer } from "@/components/ui/drawer";
 import { DiffBar, Money, PageHeader, StatusBadge } from "@/components/ui/bits";
@@ -43,12 +44,31 @@ function Orders() {
           ...["unpaid_past_due", "short_paid", "freight_overcharged", "over_paid", "pending", "settled"].map((k) => ({ value: k, label: STATUS_LABEL[k], count: counts.data?.status_counts[k] ?? 0 })),
         ]} />
       </div>
-      <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-[1fr_240px]">
-        <Input label="Search order ID" placeholder="ORD-W-204118" value={q} onChange={(e) => set(setQ)(e.target.value)} />
-        <Select label="Channel" value={channel} onChange={(e) => set(setChannel)(e.target.value)}>
-          <option value="">All channels</option>
-          {partners.data?.filter((p) => p.kind === "channel").map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </Select>
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <div className="w-full sm:max-w-md">
+          <Input
+            label="Search order ID"
+            placeholder="ORD-W-204118"
+            value={q}
+            onChange={(e) => set(setQ)(e.target.value)}
+            icon={<Search size={16} aria-hidden />}
+          />
+        </div>
+        <div className="w-full sm:w-60">
+          <Select label="Channel" value={channel} onChange={(e) => set(setChannel)(e.target.value)}>
+            <option value="">All channels</option>
+            {partners.data?.filter((p) => p.kind === "channel").map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </Select>
+        </div>
+        {(q || channel || status) && (
+          <button
+            type="button"
+            onClick={() => { setQ(""); setChannel(""); setStatus(""); setPage(1); }}
+            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full px-4 text-body-sm font-semibold text-body-mid hover:bg-soft hover:text-ink transition-colors sm:self-end"
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
       {list.loading && !d ? <ListSkeleton rows={8} /> : list.error ? <ErrorBanner message={list.error} onRetry={list.reload} /> :
