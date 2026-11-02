@@ -10,6 +10,7 @@ app.add_middleware(
     allow_origins=[settings.frontend_origin],
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Authorization", "Content-Type"],
+    expose_headers=["Content-Disposition"],
 )
 for r in (auth.router, partners.router, mappings.router, imports.router, matching.router, orders.router,
           claims.router, dashboard.router, ratecards.router):

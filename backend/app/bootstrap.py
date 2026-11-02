@@ -28,8 +28,8 @@ def ensure_reference_data(db: Session, executive_password: str = "", cofounder_p
     for k, v in SETTINGS.items():
         db.execute(pg_insert(AppSetting).values(key=k, value=v).on_conflict_do_nothing(index_elements=["key"]))
     for email, name, role, pw in (
-        ("exec@recon.example", "Asha Rao (Finance Executive)", Role.finance_executive, executive_password),
-        ("founder@recon.example", "Vikram Shah (Co-founder)", Role.cofounder, cofounder_password),
+        ("exec@recon.example", "Asha Rao", Role.finance_executive, executive_password),
+        ("founder@recon.example", "Vikram Shah", Role.cofounder, cofounder_password),
     ):
         if pw and db.scalar(select(User.id).where(User.email == email)) is None:
             db.add(User(email=email, name=name, role=role, password_hash=hash_password(pw)))
