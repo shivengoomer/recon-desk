@@ -85,17 +85,28 @@ export default function LoginPage() {
       <section className="flex items-center justify-center bg-canvas px-6 py-12">
         <div className="w-full max-w-md">
 
-          {/* Mobile brand — centered, links back to home */}
-          <Link
-            href="/"
-            className="font-display mx-auto mb-8 flex w-fit items-center gap-2.5 text-[20px] font-bold text-ink transition-opacity hover:opacity-70 lg:hidden"
-          >
-            <Logo />Recon Desk
-          </Link>
+          {/* Mobile brand — prominent highlighted capsule, links back to home */}
+          <div className="flex justify-center lg:hidden">
+            <Link
+              href="/"
+              className="group mb-7 inline-flex items-center gap-2.5 rounded-full border border-hairline bg-canvas px-4 py-2 shadow-layer-2 ring-1 ring-mint/40 transition-all duration-200 hover:border-ink hover:shadow-layer-3 active:scale-[0.98]"
+            >
+              <div className="relative flex items-center justify-center">
+                <Logo />
+                <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-mint ring-2 ring-canvas" aria-hidden />
+              </div>
+              <span className="font-display text-[19px] font-bold tracking-tight text-ink">
+                Recon Desk
+              </span>
+              <span className="ml-0.5 rounded-full bg-mint/20 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider text-ink">
+                FINANCE
+              </span>
+            </Link>
+          </div>
 
           {/* Mode tabs — only visible when registration is enabled */}
           {canRegister && (
-            <div role="tablist" aria-label="Account" className="mt-6 grid grid-cols-2 gap-1 rounded-full bg-soft p-1 lg:mt-0">
+            <div role="tablist" aria-label="Account" className="mt-2 grid grid-cols-2 gap-1 rounded-full bg-soft p-1 lg:mt-0">
               {([ ["signin", "Sign in"], ["register", "Create account"] ] as const).map(([m, label]) => (
                 <button
                   key={m}
@@ -115,17 +126,17 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => switchMode("signin")}
-              className="mt-5 inline-flex items-center gap-1.5 rounded-md px-1 text-body-sm text-body-mid transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink lg:mt-2"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-md px-1 text-body-sm text-body-mid transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
             >
               <ArrowLeft size={14} strokeWidth={2.5} aria-hidden />
               Back to sign in
             </button>
           )}
 
-          <h1 className="font-display mt-6 text-display-lg">
+          <h1 className="font-display mt-5 text-[26px] font-bold leading-tight tracking-tight text-ink md:text-[30px]">
             {mode === "signin" ? "Sign in" : "Create your account"}
           </h1>
-          <p className="mt-2 text-body-sm text-body-mid">
+          <p className="mt-1 text-body-sm text-body-mid">
             {mode === "signin"
               ? "Use your finance team account."
               : "You need the invite code from your co-founder. New accounts are finance executives."}
