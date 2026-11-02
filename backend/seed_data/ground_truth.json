@@ -1,0 +1,667 @@
+{
+ "seed": 42,
+ "orders": 2000,
+ "generated_on": "2026-11-02",
+ "injected": [
+  {
+   "order_ref": "ORD-W-200066",
+   "type": "short_paid",
+   "amount": "200.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200012",
+   "type": "short_paid",
+   "amount": "181.00"
+  },
+  {
+   "order_ref": "ORD-W-200067",
+   "type": "short_paid",
+   "amount": "95.00"
+  },
+  {
+   "order_ref": "ORD-M3-200012",
+   "type": "short_paid",
+   "amount": "53.00"
+  },
+  {
+   "order_ref": "ORD-M1-200037",
+   "type": "short_paid",
+   "amount": "122.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200016",
+   "type": "short_paid",
+   "amount": "80.00"
+  },
+  {
+   "order_ref": "ORD-M3-200030",
+   "type": "short_paid",
+   "amount": "208.00"
+  },
+  {
+   "order_ref": "ORD-W-200142",
+   "type": "freight_overcharge",
+   "amount": "65.00"
+  },
+  {
+   "order_ref": "ORD-W-200187",
+   "type": "unremitted_cod",
+   "amount": "359.00"
+  },
+  {
+   "order_ref": "ORD-W-200192",
+   "type": "unremitted_cod",
+   "amount": "209.00"
+  },
+  {
+   "order_ref": "ORD-W-200195",
+   "type": "freight_overcharge",
+   "amount": "62.00"
+  },
+  {
+   "order_ref": "ORD-W-200198",
+   "type": "short_paid",
+   "amount": "172.00"
+  },
+  {
+   "order_ref": "ORD-M2-200137",
+   "type": "unpaid_prepaid",
+   "amount": "916.54"
+  },
+  {
+   "order_ref": "ORD-W-200292",
+   "type": "short_paid",
+   "amount": "132.00"
+  },
+  {
+   "order_ref": "ORD-M2-200148",
+   "type": "unpaid_prepaid",
+   "amount": "1983.36"
+  },
+  {
+   "order_ref": "ORD-M1-200191",
+   "type": "unpaid_prepaid",
+   "amount": "786.00"
+  },
+  {
+   "order_ref": "ORD-W-200350",
+   "type": "unpaid_prepaid",
+   "amount": "1763.02"
+  },
+  {
+   "order_ref": "ORD-Q2-200049",
+   "type": "short_paid",
+   "amount": "213.00"
+  },
+  {
+   "order_ref": "ORD-M2-200179",
+   "type": "short_paid",
+   "amount": "157.00"
+  },
+  {
+   "order_ref": "ORD-W-200373",
+   "type": "freight_overcharge",
+   "amount": "59.00"
+  },
+  {
+   "order_ref": "ORD-W-200388",
+   "type": "unremitted_cod",
+   "amount": "5457.00"
+  },
+  {
+   "order_ref": "ORD-W-200388",
+   "type": "freight_overcharge",
+   "amount": "53.00"
+  },
+  {
+   "order_ref": "ORD-M1-200216",
+   "type": "short_paid",
+   "amount": "188.00"
+  },
+  {
+   "order_ref": "ORD-W-200419",
+   "type": "unremitted_cod",
+   "amount": "3558.00"
+  },
+  {
+   "order_ref": "ORD-W-200442",
+   "type": "unremitted_cod",
+   "amount": "259.00"
+  },
+  {
+   "order_ref": "ORD-W-200444",
+   "type": "missing_order_id",
+   "amount": "0.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200100",
+   "type": "short_paid",
+   "amount": "133.00"
+  },
+  {
+   "order_ref": "ORD-W-200455",
+   "type": "short_paid",
+   "amount": "89.00"
+  },
+  {
+   "order_ref": "ORD-W-200471",
+   "type": "freight_overcharge",
+   "amount": "36.00"
+  },
+  {
+   "order_ref": "ORD-W-200475",
+   "type": "freight_overcharge",
+   "amount": "34.00"
+  },
+  {
+   "order_ref": "ORD-M1-200273",
+   "type": "short_paid",
+   "amount": "53.00"
+  },
+  {
+   "order_ref": "ORD-M2-200233",
+   "type": "unpaid_prepaid",
+   "amount": "1326.54"
+  },
+  {
+   "order_ref": "ORD-M2-200237",
+   "type": "short_paid",
+   "amount": "71.00"
+  },
+  {
+   "order_ref": "ORD-W-200514",
+   "type": "short_paid",
+   "amount": "96.00"
+  },
+  {
+   "order_ref": "ORD-W-200569",
+   "type": "short_paid",
+   "amount": "113.00"
+  },
+  {
+   "order_ref": "ORD-W-200575",
+   "type": "short_paid",
+   "amount": "167.00"
+  },
+  {
+   "order_ref": "ORD-M3-200115",
+   "type": "missing_order_id",
+   "amount": "0.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200122",
+   "type": "short_paid",
+   "amount": "174.00"
+  },
+  {
+   "order_ref": "ORD-W-200600",
+   "type": "short_paid",
+   "amount": "262.00"
+  },
+  {
+   "order_ref": "ORD-M3-200118",
+   "type": "short_paid",
+   "amount": "174.00"
+  },
+  {
+   "order_ref": "ORD-W-200602",
+   "type": "unpaid_prepaid",
+   "amount": "1273.02"
+  },
+  {
+   "order_ref": "ORD-W-200617",
+   "type": "unpaid_prepaid",
+   "amount": "2841.02"
+  },
+  {
+   "order_ref": "ORD-W-200622",
+   "type": "short_paid",
+   "amount": "123.00"
+  },
+  {
+   "order_ref": "ORD-M2-200289",
+   "type": "unpaid_prepaid",
+   "amount": "2926.36"
+  },
+  {
+   "order_ref": "ORD-M2-200290",
+   "type": "unpaid_prepaid",
+   "amount": "1492.18"
+  },
+  {
+   "order_ref": "ORD-W-200648",
+   "type": "short_paid",
+   "amount": "227.00"
+  },
+  {
+   "order_ref": "ORD-W-200656",
+   "type": "freight_overcharge",
+   "amount": "37.00"
+  },
+  {
+   "order_ref": "ORD-W-200662",
+   "type": "freight_overcharge",
+   "amount": "50.00"
+  },
+  {
+   "order_ref": "ORD-W-200665",
+   "type": "short_paid",
+   "amount": "26.00"
+  },
+  {
+   "order_ref": "ORD-M2-200309",
+   "type": "short_paid",
+   "amount": "35.00"
+  },
+  {
+   "order_ref": "ORD-W-200670",
+   "type": "freight_overcharge",
+   "amount": "67.00"
+  },
+  {
+   "order_ref": "ORD-M2-200314",
+   "type": "short_paid",
+   "amount": "22.00"
+  },
+  {
+   "order_ref": "ORD-M1-200360",
+   "type": "short_paid",
+   "amount": "173.00"
+  },
+  {
+   "order_ref": "ORD-W-200693",
+   "type": "freight_overcharge",
+   "amount": "33.00"
+  },
+  {
+   "order_ref": "ORD-W-200710",
+   "type": "short_paid",
+   "amount": "205.00"
+  },
+  {
+   "order_ref": "ORD-M3-200174",
+   "type": "unpaid_prepaid",
+   "amount": "2494.44"
+  },
+  {
+   "order_ref": "ORD-M2-200363",
+   "type": "short_paid",
+   "amount": "107.00"
+  },
+  {
+   "order_ref": "ORD-M1-200391",
+   "type": "unpaid_prepaid",
+   "amount": "673.50"
+  },
+  {
+   "order_ref": "ORD-Q2-200103",
+   "type": "unpaid_prepaid",
+   "amount": "2553.60"
+  },
+  {
+   "order_ref": "ORD-Q1-200163",
+   "type": "unpaid_prepaid",
+   "amount": "969.84"
+  },
+  {
+   "order_ref": "ORD-W-200778",
+   "type": "freight_overcharge",
+   "amount": "31.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200176",
+   "type": "short_paid",
+   "amount": "198.00"
+  },
+  {
+   "order_ref": "ORD-M3-200200",
+   "type": "short_paid",
+   "amount": "121.00"
+  },
+  {
+   "order_ref": "ORD-M1-200443",
+   "type": "unpaid_prepaid",
+   "amount": "261.75"
+  },
+  {
+   "order_ref": "ORD-M1-200450",
+   "type": "short_paid",
+   "amount": "96.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200199",
+   "type": "short_paid",
+   "amount": "118.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200200",
+   "type": "short_paid",
+   "amount": "99.00"
+  },
+  {
+   "order_ref": "ORD-W-200879",
+   "type": "freight_overcharge",
+   "amount": "49.00"
+  },
+  {
+   "order_ref": "ORD-W-200911",
+   "type": "freight_overcharge",
+   "amount": "64.00"
+  },
+  {
+   "order_ref": "ORD-M2-200458",
+   "type": "short_paid",
+   "amount": "32.00"
+  },
+  {
+   "order_ref": "ORD-M1-200494",
+   "type": "short_paid",
+   "amount": "59.00"
+  },
+  {
+   "order_ref": "ORD-W-200938",
+   "type": "freight_overcharge",
+   "amount": "37.00"
+  },
+  {
+   "order_ref": "ORD-W-200956",
+   "type": "missing_order_id",
+   "amount": "0.00"
+  },
+  {
+   "order_ref": "ORD-M1-200510",
+   "type": "short_paid",
+   "amount": "101.00"
+  },
+  {
+   "order_ref": "ORD-M2-200478",
+   "type": "unpaid_prepaid",
+   "amount": "7312.54"
+  },
+  {
+   "order_ref": "ORD-W-200985",
+   "type": "unremitted_cod",
+   "amount": "1809.00"
+  },
+  {
+   "order_ref": "ORD-M3-200247",
+   "type": "unpaid_prepaid",
+   "amount": "467.22"
+  },
+  {
+   "order_ref": "ORD-W-200990",
+   "type": "unremitted_cod",
+   "amount": "359.00"
+  },
+  {
+   "order_ref": "ORD-Q2-200121",
+   "type": "short_paid",
+   "amount": "112.00"
+  },
+  {
+   "order_ref": "ORD-Q2-200124",
+   "type": "short_paid",
+   "amount": "141.00"
+  },
+  {
+   "order_ref": "ORD-W-201025",
+   "type": "freight_overcharge",
+   "amount": "63.00"
+  },
+  {
+   "order_ref": "ORD-W-201027",
+   "type": "freight_overcharge",
+   "amount": "75.00"
+  },
+  {
+   "order_ref": "ORD-W-201045",
+   "type": "short_paid",
+   "amount": "78.00"
+  },
+  {
+   "order_ref": "ORD-W-201053",
+   "type": "unpaid_prepaid",
+   "amount": "783.02"
+  },
+  {
+   "order_ref": "ORD-W-201070",
+   "type": "freight_overcharge",
+   "amount": "49.00"
+  },
+  {
+   "order_ref": "ORD-M2-200513",
+   "type": "short_paid",
+   "amount": "28.00"
+  },
+  {
+   "order_ref": "ORD-M1-200580",
+   "type": "short_paid",
+   "amount": "28.00"
+  },
+  {
+   "order_ref": "ORD-M1-200583",
+   "type": "short_paid",
+   "amount": "120.00"
+  },
+  {
+   "order_ref": "ORD-W-201140",
+   "type": "freight_overcharge",
+   "amount": "61.00"
+  },
+  {
+   "order_ref": "ORD-Q1-200256",
+   "type": "short_paid",
+   "amount": "97.00"
+  },
+  {
+   "order_ref": "ORD-M1-200617",
+   "type": "short_paid",
+   "amount": "77.00"
+  },
+  {
+   "order_ref": "ORD-W-201159",
+   "type": "freight_overcharge",
+   "amount": "68.00"
+  },
+  {
+   "order_ref": "ORD-M2-200556",
+   "type": "short_paid",
+   "amount": "89.00"
+  },
+  {
+   "order_ref": "ORD-M1-200633",
+   "type": "unpaid_prepaid",
+   "amount": "374.25"
+  },
+  {
+   "order_ref": "ORD-W-201181",
+   "type": "unpaid_prepaid",
+   "amount": "2496.06"
+  },
+  {
+   "order_ref": "ORD-M2-200565",
+   "type": "short_paid",
+   "amount": "142.00"
+  },
+  {
+   "order_ref": "ORD-M1-200657",
+   "type": "short_paid",
+   "amount": "156.00"
+  },
+  {
+   "order_ref": "ORD-W-201213",
+   "type": "freight_overcharge",
+   "amount": "52.00"
+  },
+  {
+   "order_ref": "ORD-M3-200312",
+   "type": "unpaid_prepaid",
+   "amount": "233.22"
+  },
+  {
+   "order_ref": "ORD-W-201238",
+   "type": "unremitted_cod",
+   "amount": "2508.00"
+  },
+  {
+   "order_ref": "ORD-W-201245",
+   "type": "freight_overcharge",
+   "amount": "71.00"
+  },
+  {
+   "order_ref": "ORD-W-201247",
+   "type": "unremitted_cod",
+   "amount": "359.00"
+  },
+  {
+   "order_ref": "ORD-W-201265",
+   "type": "freight_overcharge",
+   "amount": "42.00"
+  },
+  {
+   "order_ref": "ORD-M1-200683",
+   "type": "unpaid_prepaid",
+   "amount": "449.25"
+  },
+  {
+   "order_ref": "ORD-Q1-200283",
+   "type": "unpaid_prepaid",
+   "amount": "574.56"
+  },
+  {
+   "order_ref": "ORD-M1-200684",
+   "type": "unpaid_prepaid",
+   "amount": "336.75"
+  },
+  {
+   "order_ref": "ORD-M1-200687",
+   "type": "short_paid",
+   "amount": "203.00"
+  },
+  {
+   "order_ref": "ORD-W-201279",
+   "type": "freight_overcharge",
+   "amount": "88.00"
+  },
+  {
+   "order_ref": "ORD-M3-200330",
+   "type": "missing_order_id",
+   "amount": "0.00"
+  },
+  {
+   "order_ref": "ORD-M3-200331",
+   "type": "unpaid_prepaid",
+   "amount": "4678.44"
+  },
+  {
+   "order_ref": "ORD-W-201338",
+   "type": "freight_overcharge",
+   "amount": "82.00"
+  },
+  {
+   "order_ref": "ORD-W-201381",
+   "type": "short_paid",
+   "amount": "78.00"
+  },
+  {
+   "order_ref": "ORD-M1-200743",
+   "type": "short_paid",
+   "amount": "197.00"
+  },
+  {
+   "order_ref": "ORD-W-201457",
+   "type": "freight_overcharge",
+   "amount": "30.00"
+  },
+  {
+   "order_ref": "ORD-W-201459",
+   "type": "short_paid",
+   "amount": "131.00"
+  },
+  {
+   "order_ref": "ORD-W-201463",
+   "type": "short_paid",
+   "amount": "182.00"
+  },
+  {
+   "order_ref": "ORD-W-201479",
+   "type": "short_paid",
+   "amount": "88.00"
+  },
+  {
+   "order_ref": "ORD-M2-200655",
+   "type": "unpaid_prepaid",
+   "amount": "303.18"
+  },
+  {
+   "order_ref": "ORD-W-201493",
+   "type": "freight_overcharge",
+   "amount": "35.00"
+  },
+  {
+   "order_ref": "ORD-W-201494",
+   "type": "short_paid",
+   "amount": "82.00"
+  },
+  {
+   "order_ref": "ORD-W-201498",
+   "type": "missing_order_id",
+   "amount": "0.00"
+  },
+  {
+   "order_ref": "ORD-W-201503",
+   "type": "unremitted_cod",
+   "amount": "5758.00"
+  },
+  {
+   "order_ref": "ORD-W-201512",
+   "type": "short_paid",
+   "amount": "129.50"
+  },
+  {
+   "order_ref": "ORD-W-201521",
+   "type": "freight_overcharge",
+   "amount": "38.00"
+  },
+  {
+   "order_ref": "ORD-M1-200794",
+   "type": "unpaid_prepaid",
+   "amount": "2810.25"
+  },
+  {
+   "order_ref": "ORD-W-201526",
+   "type": "unpaid_prepaid",
+   "amount": "1615.04"
+  },
+  {
+   "order_ref": "ORD-M2-200684",
+   "type": "unpaid_prepaid",
+   "amount": "2271.18"
+  },
+  {
+   "order_ref": "ORD-W-201540",
+   "type": "freight_overcharge",
+   "amount": "84.00"
+  },
+  {
+   "order_ref": "ORD-M2-200690",
+   "type": "short_paid",
+   "amount": "88.00"
+  },
+  {
+   "order_ref": "ORD-W-201564",
+   "type": "freight_overcharge",
+   "amount": "26.00"
+  },
+  {
+   "order_ref": "ORD-W-201586",
+   "type": "unremitted_cod",
+   "amount": "3707.00"
+  },
+  {
+   "order_ref": "ORD-M3-200399",
+   "type": "unpaid_prepaid",
+   "amount": "2339.22"
+  }
+ ]
+}

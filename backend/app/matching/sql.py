@@ -201,7 +201,7 @@ FROM (SELECT * FROM settlement_lines WHERE order_id IS NULL AND NOT EXISTS (
 CROSS JOIN LATERAL (
   SELECT o.id,
     round((:w_amount * (CASE WHEN o.value = s.gross_amount THEN 1.0 ELSE 0.8 END)
-         + :w_date * 1.0
+         + :w_date * GREATEST(0, 1.0 - abs((s.settled_on - COALESCE(o.delivered_on, o.order_date)) - (SELECT settlement_due_days FROM partners WHERE id = s.partner_id)) / CAST(:window AS numeric))
          + :w_ref * (CASE WHEN s.order_ref IS NOT NULL AND length(s.order_ref) >= 4
                           AND o.order_ref LIKE '%' || right(s.order_ref, 4) || '%' THEN 1.0 ELSE 0 END))::numeric, 3) AS score,
     format('Amount %s vs order value %s; %s days after delivery', s.gross_amount, o.value,
@@ -226,7 +226,7 @@ FROM (SELECT * FROM cod_remittances WHERE order_id IS NULL AND NOT EXISTS (
 CROSS JOIN LATERAL (
   SELECT o.id,
     round((:w_amount * (CASE WHEN o.value = s.cod_collected THEN 1.0 ELSE 0.8 END)
-         + :w_date * 1.0
+         + :w_date * GREATEST(0, 1.0 - abs((s.remitted_on - COALESCE(o.delivered_on, o.order_date)) - (SELECT settlement_due_days FROM partners WHERE id = s.courier_id)) / CAST(:window AS numeric))
          + :w_ref * (CASE WHEN s.order_ref IS NOT NULL AND length(s.order_ref) >= 4
                           AND o.order_ref LIKE '%' || right(s.order_ref, 4) || '%' THEN 1.0 ELSE 0 END))::numeric, 3) AS score,
     format('COD collected %s vs order value %s; %s days after delivery', s.cod_collected, o.value,
