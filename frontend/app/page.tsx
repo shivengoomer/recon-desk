@@ -1,119 +1,185 @@
+import { CheckCheck, FileText, FileWarning, Layers, Plus, ScanSearch, Search, Truck, Wallet } from "lucide-react";
 import Link from "next/link";
-import { CategoryCard, type Accent } from "@/components/ui/card";
 import { Logo } from "@/components/shell";
+import { buttonClass } from "@/components/ui/button";
+import { FeatureCard } from "@/components/ui/card";
 
-const CATCHES: { accent: Accent; title: string; text: string }[] = [
-  { accent: "purple", title: "Short-paid settlements", text: "Compare what a marketplace paid with what its rate card says it should, per order, net of fees." },
-  { accent: "blue", title: "Unremitted COD", text: "Cash collected by couriers that never reached your account, aged from the day it fell due." },
-  { accent: "orange", title: "Freight overcharges", text: "Wrong weight slabs and surcharges, caught by recomputing every freight invoice line." },
-  { accent: "pink", title: "Formats that change", text: "A partner renames a column? Review a suggested mapping on 20 rows, approve it, and roll back any time." },
-  { accent: "green", title: "TCS and TDS, kept apart", text: "Statutory deductions are shown per partner and never mistaken for leakage." },
+const STATS = [
+  ["≈9s", "to match 1 lakh orders"],
+  ["20 rows", "previewed before a mapping is saved"],
+  ["0", "customer names, phones or addresses stored"],
+  ["4", "report types: orders, settlements, COD, freight"],
 ];
 
-const STEPS = [
-  ["Upload", "Drop CSV or Excel reports from every marketplace, courier and your own store."],
-  ["Map once", "Columns are suggested, previewed and saved per partner. Re-uploads are safe and de-duplicated."],
-  ["Match", "Rules compare each order with the rate card. 1 lakh orders in about nine seconds."],
-  ["Claim", "Every shortfall lands in a claims list with the evidence to send to the partner."],
+const CATCHES = [
+  { icon: Wallet, title: "Short-paid settlements", text: "Compare what a marketplace paid with what its rate card says it should, per order, net of fees." },
+  { icon: FileWarning, title: "Unremitted COD", text: "Cash collected by couriers that never reached your account, aged from the day it fell due." },
+  { icon: Truck, title: "Freight overcharges", text: "Wrong weight slabs and surcharges, caught by recomputing every freight invoice line." },
+  { icon: Layers, title: "Formats that change", text: "A partner renames a column? Review a suggested mapping, approve it, and roll back any time." },
+  { icon: ScanSearch, title: "TCS and TDS, kept apart", text: "Statutory deductions are shown per partner and never mistaken for leakage." },
+  { icon: Search, title: "Missing order IDs", text: "Rows with no usable order ID get ranked match suggestions. A person confirms; nothing closes automatically." },
+];
+
+const TICKER = ["Short-paid settlement", "Unremitted COD", "Freight overcharge", "Wrong weight slab", "Missing order ID", "TCS and TDS shown apart", "Partner format changed", "Claim with evidence"];
+
+const FAQ = [
+  ["Which files can I upload?", "CSV and Excel (.xlsx) for orders, marketplace settlements, courier COD remittances and freight invoices. Column mappings are saved per partner and file type."],
+  ["What happens when a partner changes its report format?", "The new columns are compared with your saved mapping. A suggested mapping is shown on 20 preview rows, you approve it, and every version is kept so you can roll back."],
+  ["Does AI decide what is owed?", "No. Expected amounts and statuses are computed from your rate cards by rules. AI-style suggestions are limited to column mappings and possible matches for rows with no order ID, and they are never applied automatically."],
+  ["Do you store customer personal data?", "No. Customer names, phones and addresses are never imported, so there is nothing to mask."],
+  ["Does it file claims for us?", "It prepares them. Each claim carries the expected-versus-actual numbers and the source rows, and you export the evidence to raise it with the partner."],
+  ["How fast is it?", "On a synthetic set of 1 lakh orders with about 1.2 lakh partner rows, matching took roughly nine seconds."],
 ];
 
 export default function Landing() {
   return (
     <div className="bg-canvas">
-      <header className="sticky top-0 z-20 border-b border-hairline bg-canvas/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-3xl">
-          <Link href="/" className="flex items-center gap-2.5 text-body-md font-semibold text-ink"><Logo />Recon Desk</Link>
+      <header className="sticky top-0 z-30 border-b border-hairline bg-canvas/90 backdrop-blur">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3 md:px-8">
+          <Link href="/" className="font-display flex items-center gap-2.5 text-[22px] font-bold text-ink"><Logo />Recon Desk</Link>
           <nav aria-label="Sections" className="hidden items-center gap-8 md:flex">
-            {[["#catches", "What it catches"], ["#how", "How it works"], ["#trust", "Security"]].map(([h, l]) => <a key={h} href={h} className="text-body-sm font-medium text-ink hover:underline">{l}</a>)}
+            {[["#catches", "What it catches"], ["#how", "How it works"], ["#faq", "FAQ"]].map(([h, l]) => <a key={h} href={h} className="text-body-sm font-semibold text-ink hover:underline">{l}</a>)}
           </nav>
-          <Link href="/login" className="inline-flex min-h-11 items-center rounded-sm bg-primary px-5 text-body-md font-medium text-on-primary hover:bg-ink-strong">Sign in</Link>
+          <Link href="/login" className={buttonClass("primary", "!min-h-10 !rounded-[18px] !px-5 !py-2 !text-body-sm")}>Sign in</Link>
         </div>
       </header>
 
       <main>
-        <section className="mx-auto max-w-7xl px-4 pb-12 pt-16 md:px-3xl md:pt-24">
-          <p className="text-eyebrow uppercase text-body-mid">Reconciliation for D2C brands</p>
-          <h1 className="mt-5 max-w-5xl text-[44px] font-semibold leading-[1.04] tracking-[-0.5px] md:text-display-xxl">Find every rupee your partners owe you.</h1>
-          <p className="mt-6 max-w-2xl text-body-md text-body md:text-display-xs md:font-normal md:leading-8">
-            Upload settlement, COD and freight reports. Recon Desk checks every order against your rate cards and turns each shortfall into a claim with evidence.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/login" className="inline-flex min-h-11 items-center rounded-sm bg-primary px-6 text-body-md font-medium text-on-primary hover:bg-ink-strong">Sign in</Link>
-            <a href="#how" className="inline-flex min-h-11 items-center rounded-sm border border-hairline bg-canvas px-6 text-body-md font-medium text-ink hover:bg-soft">See how it works</a>
-          </div>
-        </section>
-
-        <section aria-label="Product preview" className="mx-auto max-w-7xl px-4 pb-20 md:px-3xl">
-          <div className="grid gap-4 rounded-md bg-soft p-4 md:grid-cols-5 md:p-6">
-            <div className="rounded-md bg-primary p-6 text-on-primary shadow-layer-2 md:col-span-2 md:p-8">
-              <p className="text-eyebrow-sm uppercase text-on-primary/60">Open claims</p>
-              <p className="tabular mt-3 text-[56px] font-semibold leading-none tracking-tight">₹74,997</p>
-              <p className="mt-3 text-body-sm text-on-primary/70">across 126 claims</p>
-              <div className="mt-8 flex h-3 overflow-hidden rounded-xs bg-white/10" aria-hidden>
-                <div className="w-[38%] bg-mute-soft" /><div className="w-[36%] bg-accent-yellow" /><div className="w-[20%] bg-accent-orange" /><div className="w-[6%] bg-accent-red" />
+        <div className="bg-hero">
+        <section>
+          <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-4 py-16 md:px-8 lg:grid-cols-[1.1fr_1fr] lg:py-24">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-ink bg-canvas px-4 py-1.5 text-caption"><span className="h-2 w-2 rounded-full bg-mint ring-1 ring-ink" aria-hidden />Reconciliation for D2C brands</p>
+              <h1 className="font-display mt-6 text-[48px] font-bold leading-[1.04] tracking-[-1px] md:text-display-xxl">Find every rupee your partners owe you.</h1>
+              <p className="mt-6 max-w-xl text-body-lg text-ink">Upload settlement, COD and freight reports. Recon Desk checks every order against your rate cards and turns each shortfall into a claim with evidence.</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/login" className={buttonClass("primary", "!px-10")}>Sign in</Link>
+                <a href="#how" className={buttonClass("secondary", "!px-8")}>See how it works</a>
               </div>
-              <p className="mt-2 text-body-sm text-on-primary/60">Aged 0–30, 31–60, 61–90, 90+ days</p>
             </div>
-            <div className="overflow-hidden rounded-md border border-hairline bg-canvas md:col-span-3">
-              <div className="flex items-center justify-between border-b border-hairline px-5 py-3"><p className="text-body-sm font-medium text-ink">Largest differences</p><p className="text-body-sm text-body-mid">Orders</p></div>
-              {[["ORD-W-204118", "Website · COD · Delivered", "−₹1,409.00", "Unpaid"], ["ORD-M-88120", "Marketplace 1 · Prepaid", "−₹37.00", "Short-paid"], ["ORD-W-204377", "Website · Returned", "−₹46.00", "Short-paid"]].map(([id, sub, diff, st]) => (
-                <div key={id} className="flex items-center justify-between gap-4 border-b border-hairline px-5 py-4 last:border-b-0">
-                  <div><p className="font-mono text-caption-mono text-ink">{id}</p><p className="text-body-sm text-body-mid">{sub}</p></div>
-                  <div className="flex items-center gap-4"><span className="hidden rounded-sm bg-accent-red/10 px-2 py-1 text-caption text-on-soft-red sm:inline">{st}</span><span className="tabular text-body-md font-semibold text-on-soft-red">{diff}</span></div>
-                </div>))}
+            <div className="relative">
+              <FeatureCard className="relative z-10 pb-10">
+                <div className="rounded-md bg-primary p-6 text-on-primary">
+                  <p className="text-eyebrow-sm uppercase text-on-primary/60">Open claims</p>
+                  <p className="tabular font-display mt-2 text-[56px] font-bold leading-none text-mint">₹74,997</p>
+                  <p className="mt-2 text-body-sm text-on-primary/70">across 126 claims</p>
+                  <div className="mt-5 flex h-2.5 overflow-hidden rounded-full bg-white/10" aria-hidden><div className="w-[38%] bg-mute-soft" /><div className="w-[36%] bg-accent-yellow" /><div className="w-[20%] bg-accent-orange" /><div className="w-[6%] bg-accent-red" /></div>
+                </div>
+                <ul className="mt-4 divide-y divide-hairline">
+                  {[["ORD-W-204118", "Website · COD · Delivered", "−₹1,409.00", "Unpaid"], ["ORD-M-88120", "Marketplace 1 · Prepaid", "−₹37.00", "Short-paid"], ["ORD-W-204377", "Website · Returned", "−₹46.00", "Short-paid"]].map(([id, sub, diff, st]) => (
+                    <li key={id} className="flex items-center justify-between gap-3 py-3">
+                      <div><p className="font-mono text-caption-mono text-ink">{id}</p><p className="text-body-sm text-body-mid">{sub}</p></div>
+                      <div className="flex items-center gap-3"><span className="hidden rounded-full bg-accent-red/10 px-2.5 py-1 text-caption text-on-soft-red sm:inline">{st}</span><span className="tabular text-body-md font-bold text-on-soft-red">{diff}</span></div>
+                    </li>))}
+                </ul>
+              </FeatureCard>
+              <div className="absolute -bottom-7 right-6 z-20 flex items-center gap-3 rounded-full border border-ink bg-canvas py-2 pl-2 pr-5 shadow-layer-2 md:-right-4" aria-hidden>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-mint font-display text-[18px] font-bold">97%</span>
+                <span className="text-body-sm font-semibold leading-tight">auto-matched<br /><span className="font-medium text-body-mid">orders past due</span></span>
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="catches" className="mx-auto max-w-7xl scroll-mt-20 px-4 pb-24 md:px-3xl">
+        <section>
+          <dl className="mx-auto grid max-w-[1200px] grid-cols-2 gap-x-6 gap-y-10 px-4 pb-20 md:px-8 lg:grid-cols-4">
+            {STATS.map(([n, c]) => (
+              <div key={c} className="border-t border-ink pt-4"><dt className="font-display text-[44px] font-bold leading-none md:text-display-md">{n}</dt><dd className="mt-2 text-body-sm text-body-mid">{c}</dd></div>))}
+          </dl>
+        </section>
+        </div>
+
+        <section id="catches" className="mx-auto max-w-[1200px] scroll-mt-20 px-4 py-section md:px-8">
           <p className="text-eyebrow uppercase text-body-mid">What it catches</p>
-          <h2 className="mt-3 max-w-3xl text-[32px] font-semibold leading-tight md:text-display-lg">The leaks that live between your reports.</h2>
-          <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {CATCHES.map((c, i) => (
-              <CategoryCard key={c.title} accent={c.accent} className={`min-h-56 ${i === 0 ? "lg:col-span-2" : ""}`}>
-                <h3 className="text-display-sm !text-current">{c.title}</h3>
-                <p className="mt-3 max-w-md text-body-sm opacity-95">{c.text}</p>
-              </CategoryCard>))}
+          <h2 className="font-display mt-3 max-w-3xl text-[38px] font-bold leading-[1.1] md:text-display-xl">The leaks that live between your reports.</h2>
+          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {CATCHES.map(({ icon: Icon, title, text }) => (
+              <article key={title} className="rounded-md border border-hairline bg-canvas p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-layer-2 md:p-8">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-mint"><Icon size={22} aria-hidden /></span>
+                <h3 className="font-display mt-6 text-display-xs">{title}</h3>
+                <p className="mt-2 text-body-sm text-body-mid">{text}</p>
+              </article>))}
           </div>
         </section>
 
-        <section id="how" className="scroll-mt-20 border-y border-hairline bg-soft">
-          <div className="mx-auto max-w-7xl px-4 py-20 md:px-3xl">
-            <p className="text-eyebrow uppercase text-body-mid">How it works</p>
-            <h2 className="mt-3 max-w-3xl text-[32px] font-semibold leading-tight md:text-display-lg">From messy exports to a claims list.</h2>
-            <ol className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {STEPS.map(([t, d], i) => (
-                <li key={t} className="rounded-md border border-hairline bg-canvas p-6">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-caption text-on-primary">{i + 1}</span>
-                  <h3 className="mt-4 text-display-xs">{t}</h3>
-                  <p className="mt-2 text-body-sm text-body-mid">{d}</p>
-                </li>))}
-            </ol>
+        <div className="overflow-hidden bg-primary py-4" aria-hidden>
+          <div className="flex w-max animate-marquee gap-10 whitespace-nowrap text-body-sm text-on-primary">
+            {[...TICKER, ...TICKER, ...TICKER, ...TICKER].map((t, i) => <span key={i} className="flex items-center gap-10">{t}<span className="h-2 w-2 rounded-full bg-mint" /></span>)}
+          </div>
+        </div>
+
+        <section id="how" className="scroll-mt-20 bg-tint">
+          <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-4 py-section md:px-8 lg:grid-cols-2">
+            <div>
+              <p className="text-eyebrow uppercase text-body-mid">1 · Upload and map</p>
+              <h2 className="font-display mt-3 text-[38px] font-bold leading-[1.1] md:text-display-lg">Upload anything. Map it once.</h2>
+              <p className="mt-5 max-w-lg text-body-lg text-ink">Drop CSV or Excel reports from every marketplace, courier and your own store. Columns are suggested, previewed on 20 rows and saved per partner. Re-uploads are safe and de-duplicated.</p>
+              <Link href="/login" className={buttonClass("primary", "mt-8 !px-10")}>Try it</Link>
+            </div>
+            <FeatureCard>
+              <p className="text-body-sm font-semibold text-body-mid">Marketplace 1 · Settlement</p>
+              <ul className="mt-4 flex flex-col gap-2">
+                {[["Order ID", "Order Item ID"], ["Gross amount", "Sale Amount"], ["Net settled", "Settlement Amount"], ["TCS", "GST TCS"], ["TDS", "Income Tax TDS"]].map(([f, c]) => (
+                  <li key={f} className="flex items-center justify-between gap-3 rounded-sm bg-soft px-4 py-3 text-body-sm"><span className="font-semibold text-ink">{f}</span><span className="flex items-center gap-2 text-body-mid">{c}<span className="rounded-full bg-mint/30 px-2 py-0.5 text-caption text-on-soft-green">Suggested</span></span></li>))}
+              </ul>
+              <p className="mt-4 flex items-center gap-2 text-body-sm text-body-mid"><CheckCheck size={16} className="text-on-soft-green" aria-hidden />20 of 20 preview rows readable · version 2 ready to approve</p>
+            </FeatureCard>
           </div>
         </section>
 
-        <section id="trust" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-24 md:px-3xl">
-          <p className="text-eyebrow uppercase text-body-mid">Security and control</p>
-          <h2 className="mt-3 max-w-3xl text-[32px] font-semibold leading-tight md:text-display-lg">Rules decide. People approve.</h2>
-          <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-            {[["Rules, not guesses", "Expected amounts and statuses come from your rate cards. AI only proposes column mappings and possible matches, and never closes anything."],
-              ["No personal data", "Customer names, phones and addresses are never imported, which keeps you clear of DPDP Act obligations for this data."],
-              ["Every change recorded", "An append-only audit log shows who changed what and when. Roles separate finance executives from the co-founder."]].map(([t, d]) => (
-              <div key={t} className="rounded-md border border-hairline p-6 md:p-8"><h3 className="text-display-xs">{t}</h3><p className="mt-3 text-body-sm text-body-mid">{d}</p></div>))}
+        <section className="bg-canvas">
+          <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-4 py-section md:px-8 lg:grid-cols-2">
+            <FeatureCard className="order-2 border border-hairline lg:order-1">
+              <p className="text-body-sm font-semibold text-body-mid">Claims · SwiftShip</p>
+              <ul className="mt-3 divide-y divide-hairline">
+                {[["ORDW200388", "Unremitted COD", "₹5,457.00", "27d"], ["ORDW201503", "Unremitted COD", "₹5,758.00", "16d"], ["ORDW200419", "Freight overcharge", "₹45.00", "41d"]].map(([id, t, a, age]) => (
+                  <li key={id} className="flex items-center justify-between gap-3 py-3"><div><p className="font-mono text-caption-mono">{id}</p><p className="text-body-sm text-body-mid">{t} · {age}</p></div><span className="tabular text-body-md font-bold">{a}</span></li>))}
+              </ul>
+              <div className="mt-4 flex items-center justify-between rounded-sm bg-soft px-4 py-3 text-body-sm"><span className="flex items-center gap-2 font-semibold"><FileText size={16} aria-hidden />Evidence pack ready</span><span className="text-body-mid">CSV</span></div>
+            </FeatureCard>
+            <div className="order-1 lg:order-2">
+              <p className="text-eyebrow uppercase text-body-mid">2 · Match and claim</p>
+              <h2 className="font-display mt-3 text-[38px] font-bold leading-[1.1] md:text-display-lg">Every shortfall, with evidence.</h2>
+              <p className="mt-5 max-w-lg text-body-lg text-ink">Rules compare each order with its rate card, net of fees, with TCS and TDS added back. Anything short, late or overcharged lands in a claims list you can work by partner and age.</p>
+              <Link href="/login" className={buttonClass("primary", "mt-8 !px-10")}>Try it</Link>
+            </div>
           </div>
         </section>
 
         <section className="bg-primary text-on-primary">
-          <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 px-4 py-20 md:flex-row md:items-center md:justify-between md:px-3xl">
-            <h2 className="max-w-2xl text-[32px] font-semibold leading-tight !text-on-primary md:text-display-lg">Close the month in days, not weeks.</h2>
-            <Link href="/login" className="inline-flex min-h-11 items-center rounded-sm bg-canvas px-6 text-body-md font-medium text-primary hover:bg-soft">Sign in</Link>
+          <div className="mx-auto max-w-[1200px] px-4 py-section text-center md:px-8">
+            <p className="mx-auto flex w-fit items-center gap-2 rounded-full border border-white/30 px-4 py-1.5 text-caption"><span className="h-2 w-2 rounded-full bg-mint" aria-hidden />Our principle</p>
+            <h2 className="font-display mx-auto mt-6 max-w-3xl text-[38px] font-bold leading-[1.1] !text-on-primary md:text-display-xl">Rules decide. <span className="text-mint">People approve.</span></h2>
+            <p className="mx-auto mt-6 max-w-2xl text-body-lg text-on-primary/80">Expected amounts come from your rate cards. Suggestions never close anything, and an append-only audit log records every change.</p>
+          </div>
+        </section>
+
+        <section id="faq" className="scroll-mt-20 bg-tint">
+          <div className="mx-auto grid max-w-[1200px] gap-12 px-4 py-section md:px-8 lg:grid-cols-[1fr_1.4fr]">
+            <div><p className="text-eyebrow uppercase text-body-mid">FAQ</p><h2 className="font-display mt-3 text-[38px] font-bold leading-[1.1] md:text-display-lg">Questions, answered.</h2></div>
+            <div className="border-t border-ink/20">
+              {FAQ.map(([q, a]) => (
+                <details key={q} className="group border-b border-ink/20">
+                  <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-body-md font-semibold text-ink">{q}<Plus size={20} className="shrink-0 transition-transform group-open:rotate-45" aria-hidden /></summary>
+                  <p className="pb-5 pr-8 text-body-sm text-body-mid">{a}</p>
+                </details>))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-hero">
+          <div className="mx-auto max-w-[1200px] px-4 py-section md:px-8">
+            <div className="flex flex-col items-start gap-8 rounded-md bg-canvas p-8 md:flex-row md:items-center md:justify-between md:p-14">
+              <h2 className="font-display max-w-xl text-[38px] font-bold leading-[1.1] md:text-display-lg">Close the month in days, not weeks.</h2>
+              <Link href="/login" className={buttonClass("mint", "!px-12")}>Sign in</Link>
+            </div>
           </div>
         </section>
       </main>
 
-      <footer className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-8 text-body-sm text-body-mid md:flex-row md:justify-between md:px-3xl">
-        <p className="flex items-center gap-2"><Logo />Recon Desk</p>
-        <p>Orders · Settlements · COD · Freight</p>
+      <footer className="mx-auto flex max-w-[1200px] flex-col gap-3 px-4 py-10 text-body-sm text-muted md:flex-row md:justify-between md:px-8">
+        <p className="font-display flex items-center gap-2 text-[18px] font-bold text-ink"><Logo />Recon Desk</p>
+        <p className="text-mute">Orders · Settlements · COD · Freight</p>
       </footer>
     </div>
   );
