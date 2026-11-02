@@ -57,6 +57,11 @@ def test_full_flow(client, exec_h, founder_h):
     for row in dash["by_partner"]:  # ageing buckets always add up to the partner total
         assert abs(sum(float(v) for v in row["buckets"].values()) - float(row["total"])) < 0.01
 
+    assert dash["claims_pipeline"]["open"]["count"] == 3 and dash["claims_pipeline"]["recovered"]["count"] == 0
+    assert dash["claims_older_than_60"]["count"] >= 0
+    card = {r["partner"]: r for r in dash["scorecard"]}
+    assert card["Website"]["orders"] == 3 and card["Website"]["settled_pct"] == 0.0 and card["SwiftShip"]["kind"] == "courier"
+    assert dash["freshness"]["orders"]["rows"] == 3 and dash["freshness"]["settlement"] is None
     export = client.get("/api/claims/export.csv", headers=exec_h)
     assert export.status_code == 200 and "text/csv" in export.headers["content-type"]
     assert "ORDW2" in export.text and "settlement_lines" in export.text

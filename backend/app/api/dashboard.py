@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, select, text
@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.api.common import money
 from app.db import get_db
-from app.models import Claim, MatchSuggestion, OrderReconciliation, Partner, SettlementLine, User
+from app.models import Claim, ImportBatch, MatchSuggestion, OrderReconciliation, Partner, SettlementLine, User
+from app.models.core import FileKind
 from app.models.ledger import ClaimStatus, SuggestionStatus
 from app.security import ANY_STAFF
 
@@ -45,7 +46,45 @@ def dashboard(db: Session = Depends(get_db), _: User = Depends(ANY_STAFF)):
         by_type[ctype.value] = by_type.get(ctype.value, 0.0) + float(amount)
         total += float(amount)
     fmt = lambda v: f"{v:.2f}"
+
+    # recovery pipeline: every claim by status
+    pipeline = {st.value: {"count": 0, "amount": "0.00"} for st in ClaimStatus}
+    for st, n, amt in db.execute(select(Claim.status, func.count(), func.coalesce(func.sum(Claim.amount), 0)).group_by(Claim.status)):
+        pipeline[st.value] = {"count": n, "amount": fmt(float(amt))}
+    old = [(a, s) for _, s, a, _ in open_claims if s and (today - s).days > 60]
+
+    # partner scorecard: channels by order share settled, couriers by orders handled; at-risk from claims
+    sc_rows = db.execute(text("""
+        WITH oc AS (
+          SELECT id AS order_id, courier_id FROM orders WHERE courier_id IS NOT NULL
+          UNION SELECT order_id, courier_id FROM cod_remittances WHERE order_id IS NOT NULL
+          UNION SELECT order_id, courier_id FROM freight_charges WHERE order_id IS NOT NULL)
+        SELECT p.id, p.name, 'channel', count(o.id), count(*) FILTER (WHERE r.status = 'settled'),
+               count(*) FILTER (WHERE r.status IN ('short_paid', 'unpaid_past_due', 'freight_overcharged'))
+        FROM partners p JOIN orders o ON o.channel_id = p.id LEFT JOIN order_reconciliation r ON r.order_id = o.id
+        WHERE p.kind = 'channel' GROUP BY p.id, p.name
+        UNION ALL
+        SELECT p.id, p.name, 'courier', count(oc.order_id), count(*) FILTER (WHERE r.status = 'settled'),
+               count(*) FILTER (WHERE r.status IN ('short_paid', 'unpaid_past_due', 'freight_overcharged'))
+        FROM partners p JOIN oc ON oc.courier_id = p.id LEFT JOIN order_reconciliation r ON r.order_id = oc.order_id
+        WHERE p.kind = 'courier' GROUP BY p.id, p.name
+        ORDER BY 3, 2""")).all()
+    scorecard = [{"partner_id": pid, "partner": name, "kind": kind, "orders": orders, "issues": issues,
+                  "settled_pct": round(100 * settled / orders, 1) if orders else None,
+                  "at_risk": fmt(by_partner[pid]["total"]) if pid in by_partner else "0.00"}
+                 for pid, name, kind, orders, settled, issues in sc_rows if orders]
+
+    # data freshness: latest import per file kind
+    fresh = {k.value: None for k in FileKind}
+    for kind, last, rows in db.execute(select(ImportBatch.file_kind, func.max(ImportBatch.created_at), func.sum(ImportBatch.accepted_count))
+                                       .group_by(ImportBatch.file_kind)):
+        fresh[kind.value] = {"last_import": last.isoformat(), "days_ago": (datetime.now(timezone.utc) - last).days, "rows": int(rows or 0)}
+
     return {
+        "claims_pipeline": pipeline,
+        "claims_older_than_60": {"count": len(old), "amount": fmt(sum(float(a) for a, _ in old))},
+        "scorecard": scorecard,
+        "freshness": fresh,
         "orders": total_orders,
         "status_counts": counts,
         "auto_match_rate": round(100 * auto_matched / judged, 1) if judged else None,
