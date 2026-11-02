@@ -1,0 +1,2 @@
+Prepare deployment: backend on Render/Railway (Dockerfile), Postgres on Neon, frontend on Vercel. Health endpoint, migrations at startup, auto-seed if DB empty.
+Fill submission/deployment.md and submission/TDD.md from the real project: GitHub URL and live link at top, architecture and why, data model, flows, matching + AI handling of wrong/unsure, UI decisions with screenshots, assumptions from ASSUMPTIONS.md, what was cut, what's next.

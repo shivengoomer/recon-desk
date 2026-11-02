@@ -26,3 +26,6 @@ next-env.d.ts
 .vscode/
 coverage/
 *.log
+
+# starter kit: submission docs are not committed to the repo
+submission/

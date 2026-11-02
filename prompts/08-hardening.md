@@ -1,0 +1,1 @@
+Audit against BRIEF.md must-haves: secrets/real personal data in repo or history; every endpoint validated and role-guarded; pytest coverage >90% on matching/; Playwright e2e (login -> upload -> run matching -> confirm review item; analyst blocked from admin page); check 375px on every screen; add "reset demo data" command. Put gaps under "Known limits" in ASSUMPTIONS.md.

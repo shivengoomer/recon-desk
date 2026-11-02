@@ -1,17 +1,20 @@
-# Project rules (every session must follow)
-
-1. **Read `BRIEF.md` and `ASSUMPTIONS.md` before any work.** Add new assumptions to `ASSUMPTIONS.md` (numbered, tagged with the file/feature affected).
-2. **Scope:** order, payment and return reconciliation tool for a D2C home brand. Build the **CORE BUILD** slice from `BRIEF.md` end to end before anything else.
-3. **Keep it simple:** one FastAPI service, one Postgres. No queues, no microservices, no Redis.
-4. **Secrets:** never commit them. All config via env vars; `.env.example` lists names only (no real values).
-5. **Git:** small, meaningful commits with conventional messages (`feat:`, `fix:`, `test:`, `docs:`).
-6. **Frontend:** every list screen has loading, empty and error states. Mobile-first layout.
-7. **Backend:** every endpoint validates input with Pydantic and enforces role-based access.
+# Project rules (read every session)
+- Read BRIEF.md and ASSUMPTIONS.md before any work.
+- Product: D2C home brand order, payment and return reconciliation tool. Build the CORE BUILD slice end to end first.
+- Keep it simple: one FastAPI service, one Postgres. No queues, microservices or Redis.
+- Never commit secrets. Config via env vars; .env.example lists names only.
+- Small commits with conventional messages (feat:, fix:, test:, docs:).
+- Money is NUMERIC(12,2), never float.
+- Every list screen has loading, empty and error states. Mobile-first.
+- Every endpoint validates input (Pydantic) and enforces role-based access.
+- No dead buttons: unbuilt features are removed, not shown.
+- Log every assumption in ASSUMPTIONS.md.
 
 ## Stack
 - `backend/`: FastAPI, Python 3.12, SQLAlchemy 2, Alembic, Pytest
 - `frontend/`: Next.js (App Router), TypeScript, Tailwind
 - Postgres via `docker-compose.yml` for local dev
+- Task prompts live in `prompts/` (run in order, one per session)
 
 ## Commands
 - DB: `docker compose up -d db`

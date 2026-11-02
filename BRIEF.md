@@ -1,3 +1,1 @@
-# Client Brief
-
-> Placeholder. Paste the client brief here. It must contain a section labelled **CORE BUILD**.
+# Client brief (paste the full text of brief #4 here, especially CORE BUILD)
