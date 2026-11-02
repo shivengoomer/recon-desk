@@ -7,7 +7,7 @@ export function Select({ label, className, children, ...rest }: SelectHTMLAttrib
     <div className="flex min-w-0 flex-col gap-1.5">
       <label htmlFor={id} className="text-eyebrow-sm uppercase text-body-mid">{label}</label>
       <select id={id} {...rest}
-        className={cn("min-h-11 w-full rounded-sm border border-hairline bg-canvas px-3 text-body-sm text-ink", className)}>
+        className={cn("min-h-11 w-full rounded-sm border border-hairline bg-canvas px-3 text-body-sm text-ink focus:border-ink", className)}>
         {children}
       </select>
     </div>
@@ -19,7 +19,7 @@ export function Pagination({ page, pageSize, total, onPage }: { page: number; pa
   if (total <= pageSize) return null;
   const from = (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, total);
-  const btn = "min-h-11 rounded-sm border border-hairline bg-canvas px-4 text-body-sm font-medium text-ink hover:bg-soft disabled:opacity-40 disabled:hover:bg-canvas";
+  const btn = "min-h-11 rounded-full border border-hairline bg-canvas px-5 text-body-sm font-semibold text-ink hover:border-ink disabled:opacity-40 disabled:hover:border-hairline";
   return (
     <div className="flex items-center justify-between gap-3 pt-4">
       <p className="text-body-sm text-body-mid tabular">{from}–{to} of {total.toLocaleString("en-IN")}</p>

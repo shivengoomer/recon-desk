@@ -5,16 +5,15 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    font-feature-settings: "ss01";
   }
   body {
     @apply bg-app font-sans text-body-md text-body antialiased;
   }
   h1, h2, h3, h4 {
-    @apply text-ink;
+    @apply font-display text-ink;
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-accent-blue-info;
+    @apply outline-2 outline-offset-2 outline-ink;
   }
   ::placeholder {
     @apply text-mute-soft;
@@ -26,4 +25,63 @@
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Backdrops: calm near-white base, one soft mint glow at the top, a faint dot grid that fades out, and fine grain. */
+:root {
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@layer utilities {
+  /* marketing hero / login panel */
+  .bg-hero {
+    position: relative;
+    isolation: isolate;
+    background-color: #fbfffa;
+    background-image: radial-gradient(60rem 30rem at 50% -6rem, rgba(0, 240, 160, 0.26), transparent 70%),
+      radial-gradient(36rem 22rem at 100% 0%, rgba(0, 240, 160, 0.10), transparent 70%);
+  }
+  .bg-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.14) 1px, transparent 0);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 0%, #000 25%, transparent 78%);
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 0%, #000 25%, transparent 78%);
+  }
+  /* quiet mint-tinted band */
+  .bg-tint {
+    background-color: #f3fef1;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* signed-in app: fixed, static, never competes with the data */
+.backdrop-app {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #fafcfa;
+  background-image: radial-gradient(70rem 26rem at 55% -10rem, rgba(0, 240, 160, 0.20), transparent 70%);
+}
+.backdrop-app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.10) 1px, transparent 0);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 55% at 55% 0%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 55% at 55% 0%, #000 20%, transparent 75%);
+}
+.backdrop-app::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  opacity: 0.035;
+  mix-blend-mode: multiply;
 }

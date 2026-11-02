@@ -10,10 +10,10 @@ export function Chips({ label, options, value, onChange }: { label: string; opti
         const on = o.value === value;
         return (
           <button key={o.value} role="radio" aria-checked={on} onClick={() => onChange(o.value)}
-            className={cn("inline-flex min-h-11 shrink-0 items-center gap-2 rounded-sm border px-4 text-body-sm font-medium transition-colors",
-              on ? "border-primary bg-primary text-on-primary" : "border-hairline bg-canvas text-ink hover:bg-soft")}>
+            className={cn("inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-body-sm font-semibold transition-colors",
+              on ? "border-primary bg-primary text-on-primary" : "border-hairline bg-canvas text-ink hover:border-ink")}>
             {o.label}
-            {o.count !== undefined && <span className={cn("tabular rounded-xs px-1.5 py-0.5 text-caption", on ? "bg-white/20" : "bg-soft text-body-mid")}>{o.count.toLocaleString("en-IN")}</span>}
+            {o.count !== undefined && <span className={cn("tabular rounded-full px-2 py-0.5 text-caption", on ? "bg-mint text-ink" : "bg-soft text-body-mid")}>{o.count.toLocaleString("en-IN")}</span>}
           </button>
         );
       })}

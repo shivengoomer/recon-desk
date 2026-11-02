@@ -21,8 +21,8 @@ export function ListSkeleton({ rows = 5 }: { rows?: number }) {
 
 export function EmptyState({ title, hint, action }: { title: string; hint?: string; action?: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-md border border-dashed border-hairline bg-soft px-6 py-12 text-center">
-      <h3 className="text-display-xs">{title}</h3>
+    <div className="flex flex-col items-center gap-3 rounded-md border border-dashed border-ink/20 bg-canvas px-6 py-12 text-center">
+      <h3 className="font-display text-display-xs">{title}</h3>
       {hint && <p className="max-w-sm text-body-sm text-body-mid">{hint}</p>}
       {action}
     </div>

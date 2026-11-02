@@ -24,7 +24,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   return (
     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
-        <h1 className="text-display-sm md:text-display-md">{title}</h1>
+        <h1 className="font-display text-display-md md:text-display-lg">{title}</h1>
         {subtitle && <p className="mt-1 max-w-2xl text-body-sm text-body-mid">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-3">{actions}</div>}
@@ -40,8 +40,20 @@ export function Stat({ label, value, hint }: { label: string; value: React.React
   return (
     <div className="rounded-md border border-hairline bg-canvas p-5">
       <Eyebrow>{label}</Eyebrow>
-      <p className="tabular mt-2 text-display-sm text-ink">{value}</p>
+      <p className="tabular mt-2 font-display text-display-sm text-ink">{value}</p>
       {hint && <p className="mt-1 text-body-sm text-body-mid">{hint}</p>}
+    </div>
+  );
+}
+
+/** Money cell with a proportional bar so the biggest gaps stand out at a glance. */
+export function DiffBar({ value, max, tone = "red" }: { value: string | null | undefined; max: number; tone?: "red" | "ink" }) {
+  const n = Math.abs(Number(value));
+  const pct = max > 0 && Number.isFinite(n) ? Math.max(n > 0.005 ? 4 : 0, Math.min(100, (n / max) * 100)) : 0;
+  return (
+    <div className="flex flex-col items-end gap-1">
+      <Money value={value} diff={tone === "red"} className={tone === "ink" ? "font-semibold text-ink" : ""} />
+      <div className="h-1 w-20 overflow-hidden rounded-xs bg-soft" aria-hidden><div className={cn("h-full rounded-xs", tone === "red" ? "bg-accent-red/70" : "bg-primary/70")} style={{ width: `${pct}%` }} /></div>
     </div>
   );
 }

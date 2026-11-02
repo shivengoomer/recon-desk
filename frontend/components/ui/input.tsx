@@ -10,7 +10,7 @@ export function Input({
   const id = useId();
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-body-sm font-medium text-ink">
+      <label htmlFor={id} className="text-body-sm font-semibold text-ink">
         {label}
       </label>
       <input
@@ -19,7 +19,7 @@ export function Input({
         aria-describedby={error ? `${id}-err` : undefined}
         {...rest}
         className={cn(
-          "min-h-11 rounded-sm border bg-canvas px-4 py-3 text-body-md text-ink",
+          "min-h-12 rounded-sm border bg-canvas px-4 py-3 text-body-md text-ink transition-colors focus:border-ink",
           error ? "border-accent-red" : "border-hairline",
           className,
         )}
