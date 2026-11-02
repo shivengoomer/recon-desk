@@ -1,21 +1,45 @@
 import os
 
-import psycopg
 import pytest
 from alembic import command
 from alembic.config import Config
 from sqlalchemy.engine import make_url
 
-# Tests run against a dedicated database so dev data is never touched.
-_base = make_url(os.environ.get("DATABASE_URL", "postgresql+psycopg://recon:recon_local_only@localhost:5432/recon"))
-TEST_DB = "recon_test"
-TEST_URL = _base.set(database=TEST_DB).render_as_string(hide_password=False)
+# ---------------------------------------------------------------------------
+# Database URL resolution
+#
+# Local dev:  reads DATABASE_URL from the environment (set by .env / conftest),
+#             then creates a sibling "recon_test" database so dev data is never
+#             touched.
+#
+# CI (Neon):  NEON_TEST_DATABASE_URL is injected as DATABASE_URL by the workflow.
+#             Neon already gives us an isolated database/branch — skip the
+#             CREATE DATABASE step entirely and use the URL as-is.
+# ---------------------------------------------------------------------------
+
+_raw_url = os.environ.get("DATABASE_URL", "postgresql+psycopg://recon:recon_local_only@localhost:5432/recon")
+_is_neon = "neon.tech" in _raw_url
+
+if _is_neon:
+    # Use the Neon URL directly — no admin connection, no sibling DB creation.
+    TEST_URL = _raw_url
+else:
+    # Local Postgres: point at a dedicated test database.
+    _base = make_url(_raw_url)
+    TEST_DB = "recon_test"
+    TEST_URL = _base.set(database=TEST_DB).render_as_string(hide_password=False)
+
 os.environ["DATABASE_URL"] = TEST_URL
-os.environ["JWT_SECRET"] = "test-secret-not-for-prod-0123456789"
-os.environ["FRONTEND_ORIGIN"] = "http://localhost:3000"
+
+# Only set these if not already injected (CI sets JWT_SECRET via secrets)
+os.environ.setdefault("JWT_SECRET", "test-secret-not-for-prod-0123456789")
+os.environ.setdefault("FRONTEND_ORIGIN", "http://localhost:3000")
 
 
-def _ensure_database() -> None:
+def _ensure_local_database() -> None:
+    """Creates the sibling test database on local Postgres if it doesn't exist."""
+    import psycopg
+
     admin = _base.set(drivername="postgresql", database="postgres").render_as_string(hide_password=False)
     with psycopg.connect(admin, autocommit=True) as conn:
         if not conn.execute("SELECT 1 FROM pg_database WHERE datname=%s", (TEST_DB,)).fetchone():
@@ -24,7 +48,9 @@ def _ensure_database() -> None:
 
 @pytest.fixture(scope="session")
 def engine():
-    _ensure_database()
+    if not _is_neon:
+        _ensure_local_database()
+
     from sqlalchemy import create_engine
 
     cfg = Config(os.path.join(os.path.dirname(__file__), "..", "alembic.ini"))

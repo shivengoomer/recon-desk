@@ -1,0 +1,72 @@
+name: Backend CD
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-cd.yml"
+  # Can also be triggered manually for a forced redeploy
+  workflow_dispatch:
+
+# Only one deploy at a time
+concurrency:
+  group: backend-cd
+  cancel-in-progress: false   # finish the in-flight deploy, don't cancel it
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # ─── Gate: CI must pass first ────────────────────────────────────────────────
+  ci:
+    name: Run CI gate
+    uses: ./.github/workflows/backend-ci.yml
+    secrets: inherit
+
+  # ─── Deploy ──────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: production
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DATABASE_URL: ${{ secrets.NEON_PROD_DATABASE_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      FRONTEND_ORIGIN: ${{ secrets.FRONTEND_ORIGIN }}
+      DEMO_EXECUTIVE_PASSWORD: ${{ secrets.DEMO_EXECUTIVE_PASSWORD }}
+      DEMO_COFOUNDER_PASSWORD: ${{ secrets.DEMO_COFOUNDER_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      # Run migrations against the PRODUCTION Neon database before the new code goes live
+      - name: Run Alembic migrations (prod)
+        run: alembic upgrade head
+
+      # ── Replace the step below with your actual host's deploy command ──────
+      # Examples:
+      #   Railway:  railway up --service backend
+      #   Render:   curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      #   Fly.io:   flyctl deploy --remote-only
+      #   Docker:   docker build & push, then SSH + docker pull + restart
+      # -----------------------------------------------------------------------
+      - name: Deploy
+        run: |
+          echo "🚀 Deploy step — replace this with your hosting provider's command."
+          echo "Migrations already applied. Safe to roll the new container / dyno."
+        # Example for Render (uncomment and set RENDER_DEPLOY_HOOK secret):
+        # run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
