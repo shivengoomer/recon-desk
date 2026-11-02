@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Money, PageHeader, StatusBadge } from "@/components/ui/bits";
 import { Pagination, Select } from "@/components/ui/fields";
+import { Chips } from "@/components/ui/chips";
 import { EmptyState, ErrorBanner, ListSkeleton } from "@/components/ui/states";
 import { useToast } from "@/components/ui/toast";
 import { api, ApiError, download, qs } from "@/lib/api";
 import { CLAIM_TYPE_LABEL, rupees, shortDate } from "@/lib/format";
 import type { ClaimPage, ClaimRow, Partner } from "@/lib/types";
+import { useMatch } from "@/lib/match";
 import { useFetch } from "@/lib/use-fetch";
 
 const PAGE = 50;
@@ -20,13 +22,14 @@ function Claims() {
   const toast = useToast();
   const [partner, setPartner] = useState(sp.get("partner_id") ?? "");
   const [status, setStatus] = useState("open");
-  const [type, setType] = useState("");
+  const [type, setType] = useState(sp.get("claim_type") ?? "");
   const [page, setPage] = useState(1);
   const [sel, setSel] = useState<ClaimRow | null>(null);
   const [exporting, setExporting] = useState(false);
+  const { version } = useMatch();
   const partners = useFetch(() => api<Partner[]>("/api/partners"), []);
   const filters = { partner_id: partner, status: status || undefined, claim_type: type || undefined };
-  const list = useFetch(() => api<ClaimPage>(`/api/claims${qs({ ...filters, page, page_size: PAGE })}`), [partner, status, type, page]);
+  const list = useFetch(() => api<ClaimPage>(`/api/claims${qs({ ...filters, page, page_size: PAGE })}`), [partner, status, type, page, version]);
   const d = list.data;
   const reset = <T,>(fn: (v: T) => void) => (v: T) => { fn(v); setPage(1); };
 
@@ -45,13 +48,12 @@ function Claims() {
     <>
       <PageHeader title="Claims" subtitle="What each partner owes us, with the evidence to raise it."
         actions={<Button variant="secondary" onClick={exportCsv} loading={exporting} disabled={!d?.total}>Export evidence CSV</Button>} />
-      <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="mb-4"><Chips label="Claim status" value={status} onChange={reset(setStatus)}
+        options={[{ value: "open", label: "Open" }, { value: "filed", label: "Filed" }, { value: "recovered", label: "Recovered" }, { value: "rejected", label: "Rejected" }, { value: "", label: "All" }]} /></div>
+      <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-2">
         <Select label="Partner" value={partner} onChange={(e) => reset(setPartner)(e.target.value)}>
           <option value="">All partners</option>
           {partners.data?.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </Select>
-        <Select label="Status" value={status} onChange={(e) => reset(setStatus)(e.target.value)}>
-          <option value="">All</option>{STATUSES.map((s) => <option key={s} value={s}>{s[0].toUpperCase() + s.slice(1)}</option>)}
         </Select>
         <Select label="Type" value={type} onChange={(e) => reset(setType)(e.target.value)}>
           <option value="">All types</option>
@@ -62,26 +64,27 @@ function Claims() {
       {list.loading && !d ? <ListSkeleton rows={8} /> : list.error ? <ErrorBanner message={list.error} onRetry={list.reload} /> :
         !d || d.items.length === 0 ? <EmptyState title="No claims here" hint={partner || type || status !== "open" ? "Try clearing a filter." : "Run matching after uploading files to find shortfalls."} /> : (
           <div className={list.loading ? "opacity-60 transition-opacity" : ""}>
-            <p className="mb-2 text-body-sm text-body-mid tabular">{d.total.toLocaleString("en-IN")} claims · <span className="font-semibold text-ink">{rupees(d.amount_total)}</span></p>
-            <div className="hidden overflow-x-auto rounded-md border border-hairline md:block">
+            <div className="mb-3 flex items-baseline gap-3"><p className="tabular text-display-sm text-ink">{rupees(d.amount_total)}</p><p className="text-body-sm text-body-mid tabular">across {d.total.toLocaleString("en-IN")} claims</p></div>
+            <div className="hidden overflow-x-auto rounded-md border border-hairline bg-canvas md:block">
               <table className="w-full min-w-[760px] text-body-sm">
                 <thead><tr className="border-b border-hairline bg-soft text-left text-eyebrow-sm uppercase text-body-mid">
                   <th className="px-4 py-3 font-medium">Partner</th><th className="px-4 py-3 font-medium">Order</th><th className="px-4 py-3 font-medium">Type</th>
-                  <th className="px-4 py-3 text-right font-medium">Amount</th><th className="px-4 py-3 text-right font-medium">Age</th><th className="px-4 py-3 font-medium">Status</th></tr></thead>
+                  <th className="px-4 py-3 text-right font-medium">Amount</th><th className="px-4 py-3 text-right font-medium">Age</th><th className="px-4 py-3 font-medium">Status</th><th className="w-8" /></tr></thead>
                 <tbody>{d.items.map((c) => (
                   <tr key={c.id} tabIndex={0} onClick={() => setSel(c)} onKeyDown={(e) => e.key === "Enter" && setSel(c)} className="cursor-pointer border-b border-hairline last:border-b-0 hover:bg-soft focus-visible:bg-soft">
                     <td className="px-4 py-3 font-medium text-ink">{c.partner}</td>
                     <td className="px-4 py-3 font-mono text-caption-mono">{c.order_ref}</td>
                     <td className="px-4 py-3">{CLAIM_TYPE_LABEL[c.claim_type]}</td>
                     <td className="px-4 py-3 text-right"><Money value={c.amount} className="font-semibold text-ink" /></td>
-                    <td className="tabular px-4 py-3 text-right">{c.age_days === null ? "—" : `${c.age_days}d`}</td>
+                    <td className={`tabular px-4 py-3 text-right ${(c.age_days ?? 0) > 60 ? "font-semibold text-on-soft-red" : (c.age_days ?? 0) > 30 ? "text-on-soft-yellow" : ""}`}>{c.age_days === null ? "—" : `${c.age_days}d`}</td>
                     <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
+                    <td className="pr-3 text-mute" aria-hidden>›</td>
                   </tr>))}</tbody>
               </table>
             </div>
             <ul className="flex flex-col gap-3 md:hidden">
               {d.items.map((c) => (
-                <li key={c.id}><button onClick={() => setSel(c)} className="w-full rounded-md border border-hairline p-4 text-left hover:bg-soft">
+                <li key={c.id}><button onClick={() => setSel(c)} className="w-full rounded-md border border-hairline bg-canvas p-4 text-left hover:bg-soft">
                   <div className="flex items-start justify-between gap-2"><p className="text-body-md font-medium text-ink">{c.partner}</p><StatusBadge status={c.status} /></div>
                   <p className="mt-1 font-mono text-caption-mono text-body-mid">{c.order_ref}</p>
                   <div className="mt-3 flex items-center justify-between text-body-sm"><span className="text-body-mid">{CLAIM_TYPE_LABEL[c.claim_type]} · {c.age_days ?? "—"}d</span><Money value={c.amount} className="font-semibold text-ink" /></div>

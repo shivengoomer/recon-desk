@@ -35,3 +35,5 @@ export const CLAIM_TYPE_LABEL: Record<string, string> = {
   short_paid: "Short-paid", unremitted_cod: "Unremitted COD", freight_overcharge: "Freight overcharge", return_not_received: "Return not received",
 };
 export const KIND_LABEL: Record<string, string> = { orders: "Orders", settlement: "Settlement", cod: "COD remittance", freight: "Freight invoice" };
+
+export const cap = (s: string) => s.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());

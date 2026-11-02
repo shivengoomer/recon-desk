@@ -8,11 +8,13 @@ import { useToast } from "@/components/ui/toast";
 import { api, ApiError } from "@/lib/api";
 import { rupees, shortDate } from "@/lib/format";
 import type { Suggestion } from "@/lib/types";
+import { useMatch } from "@/lib/match";
 import { useFetch } from "@/lib/use-fetch";
 
 export default function ReviewPage() {
   const toast = useToast();
-  const { data, error, loading, reload, setData } = useFetch(() => api<Suggestion[]>("/api/suggestions?limit=100"), []);
+  const { version } = useMatch();
+  const { data, error, loading, reload, setData } = useFetch(() => api<Suggestion[]>("/api/suggestions?limit=100"), [version]);
   const [busy, setBusy] = useState<number | null>(null);
 
   async function decide(s: Suggestion, action: "confirm" | "reject") {
@@ -45,7 +47,7 @@ export default function ReviewPage() {
                 <Card key={`${first.line_table}:${first.line_id}`} className="!p-5 md:!p-6">
                   <Eyebrow>{first.line_table === "cod_remittances" ? "COD remittance row" : "Settlement row"}</Eyebrow>
                   <p className="tabular mt-1 text-display-xs text-ink">{rupees(first.line_amount)} <span className="text-body-sm font-normal text-body-mid">· {shortDate(first.line_date)}{first.line_ref ? ` · ref “${first.line_ref}”` : " · no order ID"}</span></p>
-                  <ul className="mt-4 divide-y divide-hairline rounded-md border border-hairline">
+                  <ul className="mt-4 divide-y divide-hairline rounded-md border border-hairline bg-canvas">
                     {cands.map((s) => (
                       <li key={s.id} className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
                         <div className="min-w-0">

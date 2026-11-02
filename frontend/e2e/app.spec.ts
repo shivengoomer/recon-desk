@@ -11,6 +11,16 @@ test("wrong password shows an error and stays on login", async ({ page }) => {
   await expect(page).toHaveURL(/\/login/);
 });
 
+test("landing page presents the product and leads to sign in", async ({ page }, info) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("every rupee");
+  await expect(page.getByRole("heading", { name: /leaks that live between/ })).toBeVisible();
+  await noHorizontalScroll(page);
+  await page.screenshot({ path: `e2e/shots/${info.project.name}-landing.png`, fullPage: true });
+  await page.getByRole("link", { name: "Sign in" }).first().click();
+  await expect(page).toHaveURL(/\/login/);
+});
+
 test("anonymous visitors are sent to login", async ({ page }) => {
   await page.goto("/claims");
   await expect(page).toHaveURL(/\/login/);
@@ -45,7 +55,7 @@ test("orders: filter by status and open the breakdown drawer", async ({ page }, 
 test("claims: list, update a claim with a note, export evidence", async ({ page }, info) => {
   await login(page);
   await page.goto("/claims");
-  await expect(page.getByText(/claims ·/)).toBeVisible();
+  await expect(page.getByText(/across .* claims/)).toBeVisible();
   await noHorizontalScroll(page);
   await page.screenshot({ path: `e2e/shots/${info.project.name}-claims.png`, fullPage: true });
   const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Export evidence CSV" }).click()]);

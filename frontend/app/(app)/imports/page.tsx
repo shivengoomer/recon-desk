@@ -13,6 +13,15 @@ import { KIND_LABEL, num, shortDate } from "@/lib/format";
 import type { Batch, FieldDef, FileKind, Inspect, Mapping, Partner } from "@/lib/types";
 import { useFetch } from "@/lib/use-fetch";
 
+function Step({ n, id, title, note }: { n: number; id: string; title: string; note?: string }) {
+  return (
+    <div className="mb-3 flex items-start gap-3">
+      <span aria-hidden className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-caption text-on-primary">{n}</span>
+      <div><h2 id={id} className="text-display-xs">{title}</h2>{note && <p className="mt-0.5 text-body-sm text-body-mid">{note}</p>}</div>
+    </div>
+  );
+}
+
 const KINDS: FileKind[] = ["orders", "settlement", "cod", "freight"];
 const KIND_HINT: Record<FileKind, string> = {
   orders: "From your OMS or storefront", settlement: "Payout report from a channel", cod: "Remittance report from a courier", freight: "Freight invoice from a courier",
@@ -121,13 +130,14 @@ export default function ImportsPage() {
 
   const colOptions = info?.headers ?? [];
   const mappedFields = defs.filter((f) => mapping[f.name]);
+  const usingSaved = !!info?.active_matches_file && sameAsActive;
 
   return (
     <>
       <PageHeader title="Import files" subtitle="CSV or Excel. Column mappings are saved per partner and file type, previewed on 20 rows, and versioned." />
 
       <section aria-labelledby="s1" className="mb-6">
-        <h2 id="s1" className="mb-3 text-display-xs">1. What are you uploading?</h2>
+        <Step n={1} id="s1" title="What are you uploading?" />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" role="radiogroup" aria-label="File type">
           {KINDS.map((k) => (
             <button key={k} role="radio" aria-checked={kind === k} onClick={() => setKind(k)}
@@ -148,7 +158,7 @@ export default function ImportsPage() {
       {!partnerId && !partners.error && <div className="mb-6"><ListSkeleton rows={2} /></div>}
       {partnerId && (
       <section aria-labelledby="s2" className="mb-6">
-        <h2 id="s2" className="mb-3 text-display-xs">2. Choose the file</h2>
+        <Step n={2} id="s2" title="Choose the file" />
         <div onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
           onDrop={(e) => { e.preventDefault(); setDrag(false); pick(e.dataTransfer.files[0]); }}
           className={cn("flex flex-col items-center gap-3 rounded-md border border-dashed px-6 py-10 text-center transition-colors", drag ? "border-primary bg-soft" : "border-hairline bg-soft")}>
@@ -167,13 +177,13 @@ export default function ImportsPage() {
       {file && info && (
         <>
           <section aria-labelledby="s3" className="mb-6">
-            <h2 id="s3" className="mb-1 text-display-xs">3. Check the column mapping</h2>
-            <p className="mb-3 text-body-sm text-body-mid">
-              {info.active_matches_file && sameAsActive ? `Using your saved mapping (version ${active?.version}).`
+            <Step n={3} id="s3" title="Check the column mapping" note={
+              usingSaved ? `Using your saved mapping (version ${active?.version}). Nothing to change unless the partner changed its format.`
                 : active && !info.active_matches_file ? "This file's columns differ from your saved mapping. A suggested mapping is shown; review it before approving."
-                  : "Suggested from the column names. Nothing is saved until you approve."}
-            </p>
-            <div className="overflow-hidden rounded-md border border-hairline">
+                  : "Suggested from the column names. Nothing is saved until you approve."} />
+            <details open={!usingSaved} className="group">
+              <summary className="mb-3 flex min-h-11 cursor-pointer list-none items-center gap-2 text-body-sm font-medium text-ink"><span aria-hidden className="transition-transform group-open:rotate-90">›</span>{usingSaved ? "Review mapping" : "Mapping"} <span className="text-body-mid">({mappedFields.length} of {defs.length} fields mapped)</span></summary>
+            <div className="overflow-hidden rounded-md border border-hairline bg-canvas">
               {defs.map((f) => {
                 const sug = info.suggestion[f.name];
                 return (
@@ -189,14 +199,15 @@ export default function ImportsPage() {
               })}
             </div>
             <div className="mt-3"><Button variant="secondary" onClick={() => file && inspect(file, clean(mapping))} loading={busy === "inspect"} disabled={missingRequired.length > 0}>Refresh preview</Button></div>
+            </details>
           </section>
 
           <section aria-labelledby="s4" className="mb-6">
-            <h2 id="s4" className="mb-3 text-display-xs">4. Preview first 20 rows</h2>
+            <Step n={4} id="s4" title="Preview the first 20 rows" />
             {info.preview_error ? <ErrorBanner message={info.preview_error} /> : !info.preview ? <p className="text-body-sm text-body-mid">Map the required columns to see a preview.</p> : (
               <>
                 <p className="mb-2 text-body-sm text-body-mid tabular"><span className="font-medium text-on-soft-green">{info.preview.ok_count} readable</span>{info.preview.error_count > 0 && <> · <span className="font-medium text-on-soft-red">{info.preview.error_count} with problems</span></>}</p>
-                <div className="overflow-x-auto rounded-md border border-hairline">
+                <div className="overflow-x-auto rounded-md border border-hairline bg-canvas">
                   <table className="w-full min-w-[640px] text-body-sm">
                     <thead><tr className="border-b border-hairline bg-soft text-left text-eyebrow-sm uppercase text-body-mid">
                       <th className="px-3 py-2 font-medium">Row</th>{mappedFields.map((f) => <th key={f.name} className="px-3 py-2 font-medium">{f.label}</th>)}</tr></thead>
@@ -235,7 +246,7 @@ export default function ImportsPage() {
         <h2 id="hist" className="mb-3 text-display-xs">Mapping versions</h2>
         {versions.loading && !versions.data ? <ListSkeleton rows={2} /> : versions.error ? <ErrorBanner message={versions.error} onRetry={versions.reload} /> :
           !versions.data?.length ? <EmptyState title="No saved mapping yet" hint="Upload a file and approve a mapping to save it for this source." /> : (
-            <ul className="divide-y divide-hairline rounded-md border border-hairline">
+            <ul className="divide-y divide-hairline rounded-md border border-hairline bg-canvas">
               {versions.data.map((m) => (
                 <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                   <div className="flex flex-wrap items-center gap-3">
@@ -253,7 +264,7 @@ export default function ImportsPage() {
         <h2 id="rec" className="mb-3 text-display-xs">Recent imports</h2>
         {recent.loading && !recent.data ? <ListSkeleton rows={3} /> : recent.error ? <ErrorBanner message={recent.error} onRetry={recent.reload} /> :
           !recent.data?.length ? <EmptyState title="No imports yet" /> : (
-            <ul className="divide-y divide-hairline rounded-md border border-hairline">
+            <ul className="divide-y divide-hairline rounded-md border border-hairline bg-canvas">
               {recent.data.map((b) => (
                 <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-body-sm">
                   <div><p className="font-medium text-ink">{b.file_name}</p><p className="text-body-mid">{KIND_LABEL[b.file_kind]} · {shortDate(b.created_at)}</p></div>

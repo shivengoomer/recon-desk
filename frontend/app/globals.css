@@ -8,7 +8,7 @@
     font-feature-settings: "ss01";
   }
   body {
-    @apply bg-canvas font-sans text-body-md text-body antialiased;
+    @apply bg-app font-sans text-body-md text-body antialiased;
   }
   h1, h2, h3, h4 {
     @apply text-ink;

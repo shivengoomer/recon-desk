@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { rupees, STATUS_LABEL } from "@/lib/format";
+import { cap, rupees, STATUS_LABEL } from "@/lib/format";
 import { Badge, type BadgeTone } from "./badge";
 
 const TONE: Record<string, BadgeTone> = {
@@ -10,7 +10,7 @@ const TONE: Record<string, BadgeTone> = {
 
 export function StatusBadge({ status }: { status: string | null }) {
   if (!status) return <Badge tone="neutral">Not run</Badge>;
-  return <Badge tone={TONE[status] ?? "neutral"}>{STATUS_LABEL[status] ?? status.replace("_", " ")}</Badge>;
+  return <Badge tone={TONE[status] ?? "neutral"}>{STATUS_LABEL[status] ?? cap(status)}</Badge>;
 }
 
 /** Right-aligned tabular money; differences are signed and coloured. */

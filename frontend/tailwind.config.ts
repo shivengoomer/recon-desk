@@ -28,6 +28,7 @@ const config: Config = {
         // Darkened text variants for soft badges (AA on a 12% tint of the accent).
         "on-soft": { green: "#007a14", yellow: "#8a5a00", red: "#b3122a", blue: "#0f56c4" },
         soft: { DEFAULT: "#f6f6f6" },
+        app: "#fafafa",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Arial", "sans-serif"],

@@ -52,7 +52,7 @@ export default function RateCardsPage() {
       <PageHeader title="Rate cards" subtitle="What each partner should charge. Expected amounts and gaps are computed from these."
         actions={canEdit && <Button onClick={() => setEditing("new")}>Add rate card</Button>} />
 
-      <section className="mb-8 rounded-md border border-hairline p-5">
+      <section className="mb-8 rounded-md border border-hairline bg-canvas p-5">
         <p className="text-eyebrow-sm uppercase text-body-mid">Gap tolerance</p>
         {settings.error ? <ErrorBanner message={settings.error} onRetry={settings.reload} /> : (
           <div className="mt-2 flex flex-wrap items-end gap-4">
@@ -73,7 +73,7 @@ export default function RateCardsPage() {
               const p = byId.get(c.partner_id);
               const courier = p?.kind === "courier";
               return (
-                <li key={c.id} className="rounded-md border border-hairline p-5">
+                <li key={c.id} className="rounded-md border border-hairline bg-canvas p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div><p className="text-body-md font-medium text-ink">{p?.name ?? "Partner"}</p><p className="text-body-sm text-body-mid">{c.name} · from {shortDate(c.effective_from)}{c.effective_to ? ` to ${shortDate(c.effective_to)}` : ""}</p></div>
                     <Badge tone="neutral">{courier ? "Courier" : "Channel"}</Badge>
@@ -147,7 +147,7 @@ function CardForm({ card, partners, onDone }: { card: RateCard | null; partners:
       </div>
       <div className="flex flex-col gap-3">
         {lines.map((l, i) => (
-          <fieldset key={i} className="rounded-md border border-hairline p-4">
+          <fieldset key={i} className="rounded-md border border-hairline bg-canvas p-4">
             <legend className="px-1 text-eyebrow-sm uppercase text-body-mid">{courier ? "Weight slab" : "Line"} {i + 1}</legend>
             <div className="grid grid-cols-2 gap-3">
               {courier ? (

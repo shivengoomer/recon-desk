@@ -24,7 +24,7 @@ export default function AuditPage() {
       <PageHeader title="Audit log" subtitle="Every change, who made it and when. This log cannot be edited." />
       {loading && !data ? <ListSkeleton rows={8} /> : error ? <ErrorBanner message={error} onRetry={reload} /> : !data?.length ? <EmptyState title="No activity yet" /> : (
         <>
-          <ul className="divide-y divide-hairline rounded-md border border-hairline">
+          <ul className="divide-y divide-hairline rounded-md border border-hairline bg-canvas">
             {data.map((e) => (
               <li key={e.id} className="px-4 py-3">
                 <details>

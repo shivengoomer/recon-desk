@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Eyebrow, Money, StatusBadge } from "@/components/ui/bits";
 import { ErrorBanner, ListSkeleton } from "@/components/ui/states";
 import { api } from "@/lib/api";
-import { rupees, shortDate } from "@/lib/format";
+import { cap, rupees, shortDate } from "@/lib/format";
 import { useFetch } from "@/lib/use-fetch";
 
 interface Detail {
@@ -30,9 +30,9 @@ export function OrderDetail({ id }: { id: number }) {
       <div className="flex flex-wrap items-center gap-2">
         <StatusBadge status={r?.status ?? null} />
         <Badge tone="neutral">{o.payment_mode.toUpperCase()}</Badge>
-        <Badge tone="neutral">{o.delivery_status.replace(/_/g, " ")}</Badge>
+        <Badge tone="neutral">{cap(o.delivery_status)}</Badge>
       </div>
-      <dl className="rounded-md border border-hairline px-4 py-2">
+      <dl className="rounded-md border border-hairline bg-canvas px-4 py-2">
         <Row label="Channel">{o.channel}</Row>
         <Row label="Order date">{shortDate(o.order_date)}</Row>
         <Row label="Delivered">{shortDate(o.delivered_on)}</Row>
@@ -42,7 +42,7 @@ export function OrderDetail({ id }: { id: number }) {
       {r && (
         <section>
           <Eyebrow>Expected from the rate card</Eyebrow>
-          <dl className="mt-2 rounded-md border border-hairline px-4 py-2">
+          <dl className="mt-2 rounded-md border border-hairline bg-canvas px-4 py-2">
             <Row label="Order value">{rupees(o.value)}</Row>
             {commission > 0 && <Row label={`Commission ${b.commission_pct}%`}>− {rupees(commission)}</Row>}
             {Number(b.fixed_fee) > 0 && <Row label="Fixed fee">− {rupees(b.fixed_fee as string)}</Row>}
@@ -52,7 +52,7 @@ export function OrderDetail({ id }: { id: number }) {
           {b.rate_card_missing === true && <p className="mt-2 text-body-sm text-on-soft-yellow">No rate card covers this channel and date, so this order is not judged. Add one in Rate cards.</p>}
 
           <div className="mt-5"><Eyebrow>Received</Eyebrow></div>
-          <dl className="mt-2 rounded-md border border-hairline px-4 py-2">
+          <dl className="mt-2 rounded-md border border-hairline bg-canvas px-4 py-2">
             <Row label="Settlement (net)">{rupees(Number(b.settlement_received) - Number(r.tcs) - Number(r.tds))}</Row>
             <Row label="TCS deducted">{rupees(r.tcs)}</Row>
             <Row label="TDS deducted">{rupees(r.tds)}</Row>
@@ -65,7 +65,7 @@ export function OrderDetail({ id }: { id: number }) {
           {r.billed_freight && (
             <>
               <div className="mt-5"><Eyebrow>Freight</Eyebrow></div>
-              <dl className="mt-2 rounded-md border border-hairline px-4 py-2">
+              <dl className="mt-2 rounded-md border border-hairline bg-canvas px-4 py-2">
                 <Row label="Expected">{rupees(r.expected_freight)}</Row>
                 <Row label="Billed">{rupees(r.billed_freight)}</Row>
                 <Row label="Difference" strong><Money value={r.freight_difference} diff /></Row>
@@ -80,7 +80,7 @@ export function OrderDetail({ id }: { id: number }) {
         rows.length > 0 && (
           <section key={title}>
             <Eyebrow>{title}</Eyebrow>
-            <div className="mt-2 overflow-x-auto rounded-md border border-hairline">
+            <div className="mt-2 overflow-x-auto rounded-md border border-hairline bg-canvas">
               <table className="w-full text-body-sm">
                 <tbody>{rows.map((row, i) => (
                   <tr key={i} className="border-b border-hairline last:border-b-0">
