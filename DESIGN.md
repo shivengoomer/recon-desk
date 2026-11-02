@@ -5,7 +5,7 @@ Source of truth for all UI work. This replaces the earlier Webflow-style spec. T
 ## Adaptation for Recon Desk (product UI)
 
 - **Token naming:** the spec's `primary` (spring-mint #00f0a0) is `mint` in code. Our Tailwind `primary` is ink black (#000), because most "primary" classes mean the black CTA fill.
-- **Mint band as page background:** the signed-in app sits on `canvas-mint` (#ecffe0) with white cards, so panels lift off the wash. Dense data tables always sit on white.
+- **Backdrop (client asked for something more modern than a flat mint wash):** a calm near-white base (#fafcfa) with one soft mint glow at the top, a faint dot grid that fades out with a radial mask, and fine grain at ~3.5% opacity. Static, never animated, so it never competes with data. Marketing hero and login panel use the same recipe with a stronger glow; secondary marketing bands use a quiet mint tint (#f3fef1) with hairline edges. Cards stay white. Multi-colour blobs were tried and rejected.
 - **One accent:** mint owns the logo, the active nav item, highlights, the money-at-risk figure on black, and the one signature mint pill, which is **Run matching**. Everything else is black pills, white pills or hairline controls.
 - **Status colours are data, not chrome:** finance needs red / amber / blue to mark problems. They appear only as small status badges, difference figures and chart segments, never as buttons, bands or card fills. Soft tint (about 12%) with a darker text variant for AA contrast. Settled uses mint.
 - **No claim-type colour cards:** claim types use white feature cards with a mint icon chip.
@@ -83,7 +83,7 @@ Headlines are big, heavy and condensed; body copy stays light and roomy. Never s
 | 1 Hairline | 0.5px inset rgba(0,0,0,.5) | Bordered chips, outlined controls |
 | 2 Soft float | whisper-soft drop shadow | Mockup cards floating over mint bands |
 
-No gradient system. Depth comes from band contrast and rounded cards.
+Depth comes from band contrast, rounded cards and the single soft mint glow behind them.
 
 ## Shapes
 

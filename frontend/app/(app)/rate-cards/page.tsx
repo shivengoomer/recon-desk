@@ -61,7 +61,7 @@ export default function RateCardsPage() {
                 <div className="w-40"><Input label="Rupees" type="number" min={0} max={10000} value={tol ?? settings.data?.tolerance_inr ?? ""} onChange={(e) => setTol(e.target.value)} /></div>
                 <Button variant="secondary" onClick={saveTolerance} disabled={tol === null || tol === "" || Number(tol) === settings.data?.tolerance_inr}>Save</Button>
               </>
-            ) : <p className="tabular text-display-xs text-ink">{settings.data ? rupees(settings.data.tolerance_inr, { decimals: false }) : "—"}</p>}
+            ) : <p className="tabular font-display text-display-xs text-ink">{settings.data ? rupees(settings.data.tolerance_inr, { decimals: false }) : "—"}</p>}
             <p className="max-w-md text-body-sm text-body-mid">Differences up to this amount are treated as settled.</p>
           </div>)}
       </section>

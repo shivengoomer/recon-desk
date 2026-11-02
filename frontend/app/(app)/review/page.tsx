@@ -46,7 +46,7 @@ export default function ReviewPage() {
               return (
                 <Card key={`${first.line_table}:${first.line_id}`} className="!p-5 md:!p-6">
                   <Eyebrow>{first.line_table === "cod_remittances" ? "COD remittance row" : "Settlement row"}</Eyebrow>
-                  <p className="tabular mt-1 text-display-xs text-ink">{rupees(first.line_amount)} <span className="text-body-sm font-normal text-body-mid">· {shortDate(first.line_date)}{first.line_ref ? ` · ref “${first.line_ref}”` : " · no order ID"}</span></p>
+                  <p className="tabular mt-1 font-display text-display-xs text-ink">{rupees(first.line_amount)} <span className="text-body-sm font-normal text-body-mid">· {shortDate(first.line_date)}{first.line_ref ? ` · ref “${first.line_ref}”` : " · no order ID"}</span></p>
                   <ul className="mt-4 divide-y divide-hairline rounded-md border border-hairline bg-canvas">
                     {cands.map((s) => (
                       <li key={s.id} className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">

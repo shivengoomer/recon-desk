@@ -3,7 +3,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Drawer } from "@/components/ui/drawer";
-import { Money, PageHeader, StatusBadge } from "@/components/ui/bits";
+import { DiffBar, Money, PageHeader, StatusBadge } from "@/components/ui/bits";
 import { Pagination, Select } from "@/components/ui/fields";
 import { Chips } from "@/components/ui/chips";
 import { EmptyState, ErrorBanner, ListSkeleton } from "@/components/ui/states";
@@ -32,6 +32,7 @@ function Orders() {
   );
   const set = <T,>(fn: (v: T) => void) => (v: T) => { fn(v); setPage(1); };
   const d = list.data;
+  const maxDiff = Math.max(0, ...(d?.items.map((o) => Math.abs(Number(o.difference))) ?? [0]));
 
   return (
     <>
@@ -71,7 +72,7 @@ function Orders() {
                     <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
                     <td className="px-4 py-3 text-right"><Money value={o.expected} /></td>
                     <td className="px-4 py-3 text-right"><Money value={o.received} /></td>
-                    <td className="px-4 py-3 text-right"><Money value={o.difference} diff /></td>
+                    <td className="px-4 py-3 text-right"><DiffBar value={o.difference} max={maxDiff} /></td>
                     <td className="px-4 py-3 text-right"><Money value={o.freight_difference} diff /></td>
                     <td className="pr-3 text-mute" aria-hidden>›</td>
                   </tr>))}</tbody>

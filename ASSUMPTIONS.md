@@ -24,6 +24,8 @@ Format: N. [area/feature] assumption, and why.
 21. [files] CSV and Excel (.xlsx) are accepted; no .xls. Max upload 25 MB (about 1 lakh rows). Duplicate rows are skipped via row hash.
 22. [frontend/ landing page] A public marketing page lives at `/`; its preview figures are illustrative (the three example orders come from the brief's sample data). There is no demo-request form, so the only call to action is Sign in.
 23. [frontend/ matching] "Run matching" is a global action in the top bar (both roles); pages refresh themselves after a run.
+24. [frontend/ design] The UI follows the client-supplied spring-mint / black / white system in `DESIGN.md` (Titillium Web headings, Inter body, pill buttons, 24px/40px cards). Status colours (red, amber, blue) are kept for data only: badges, difference figures and chart segments.
+25. [frontend/ landing page] Marketing copy avoids testimonials and user counts; the quote band states a product principle and the four stats (≈9s per 1 lakh orders, 20-row preview, 0 personal data stored, 4 report types) come from this project's own benchmark and rules.
 
 ## Known limits
 - Benchmark (synthetic, 1 lakh orders + ~1.2 lakh partner lines, local Postgres 16): order import 4.4s, matching 8.9s, full seed-import-match 31s. Reproduce with `python -m scripts.seed --orders 100000 --out <dir> --import --reset`.

@@ -1,9 +1,9 @@
 "use client";
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClass } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
-import { Money, PageHeader, StatusBadge } from "@/components/ui/bits";
+import { DiffBar, Money, PageHeader, StatusBadge } from "@/components/ui/bits";
 import { Pagination, Select } from "@/components/ui/fields";
 import { Chips } from "@/components/ui/chips";
 import { EmptyState, ErrorBanner, ListSkeleton } from "@/components/ui/states";
@@ -31,6 +31,7 @@ function Claims() {
   const filters = { partner_id: partner, status: status || undefined, claim_type: type || undefined };
   const list = useFetch(() => api<ClaimPage>(`/api/claims${qs({ ...filters, page, page_size: PAGE })}`), [partner, status, type, page, version]);
   const d = list.data;
+  const maxAmt = Math.max(0, ...(d?.items.map((c) => Number(c.amount)) ?? [0]));
   const reset = <T,>(fn: (v: T) => void) => (v: T) => { fn(v); setPage(1); };
 
   async function exportCsv() {
@@ -64,7 +65,7 @@ function Claims() {
       {list.loading && !d ? <ListSkeleton rows={8} /> : list.error ? <ErrorBanner message={list.error} onRetry={list.reload} /> :
         !d || d.items.length === 0 ? <EmptyState title="No claims here" hint={partner || type || status !== "open" ? "Try clearing a filter." : "Run matching after uploading files to find shortfalls."} /> : (
           <div className={list.loading ? "opacity-60 transition-opacity" : ""}>
-            <div className="mb-3 flex items-baseline gap-3"><p className="tabular text-display-sm text-ink">{rupees(d.amount_total)}</p><p className="text-body-sm text-body-mid tabular">across {d.total.toLocaleString("en-IN")} claims</p></div>
+            <div className="mb-3 flex items-baseline gap-3"><p className="tabular font-display text-display-sm text-ink">{rupees(d.amount_total)}</p><p className="text-body-sm text-body-mid tabular">across {d.total.toLocaleString("en-IN")} claims</p></div>
             <div className="hidden overflow-x-auto rounded-md border border-hairline bg-canvas md:block">
               <table className="w-full min-w-[760px] text-body-sm">
                 <thead><tr className="border-b border-hairline bg-soft text-left text-eyebrow-sm uppercase text-body-mid">
@@ -75,7 +76,7 @@ function Claims() {
                     <td className="px-4 py-3 font-medium text-ink">{c.partner}</td>
                     <td className="px-4 py-3 font-mono text-caption-mono">{c.order_ref}</td>
                     <td className="px-4 py-3">{CLAIM_TYPE_LABEL[c.claim_type]}</td>
-                    <td className="px-4 py-3 text-right"><Money value={c.amount} className="font-semibold text-ink" /></td>
+                    <td className="px-4 py-3 text-right"><DiffBar value={c.amount} max={maxAmt} tone="ink" /></td>
                     <td className={`tabular px-4 py-3 text-right ${(c.age_days ?? 0) > 60 ? "font-semibold text-on-soft-red" : (c.age_days ?? 0) > 30 ? "text-on-soft-yellow" : ""}`}>{c.age_days === null ? "—" : `${c.age_days}d`}</td>
                     <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
                     <td className="pr-3 text-mute" aria-hidden>›</td>
@@ -124,7 +125,7 @@ function ClaimEditor({ claim, onSaved }: { claim: ClaimRow; onSaved: () => void 
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="tabular text-display-sm text-ink">{rupees(claim.amount)}</p>
+        <p className="tabular font-display text-display-sm text-ink">{rupees(claim.amount)}</p>
         <p className="mt-1 text-body-sm text-body-mid">{CLAIM_TYPE_LABEL[claim.claim_type]} · {claim.partner} · due {shortDate(claim.due_since)}</p>
         <p className="mt-1 font-mono text-caption-mono text-ink">{claim.order_ref}</p>
       </div>
@@ -139,7 +140,7 @@ function ClaimEditor({ claim, onSaved }: { claim: ClaimRow; onSaved: () => void 
       </div>
       <div className="flex flex-wrap gap-3">
         <Button onClick={save} loading={busy} disabled={needsNote}>Save</Button>
-        <a href={`/orders?q=${encodeURIComponent(claim.order_ref)}`} className="inline-flex min-h-11 items-center rounded-sm border border-hairline px-5 text-body-md font-medium text-ink hover:bg-soft">View order</a>
+        <a href={`/orders?q=${encodeURIComponent(claim.order_ref)}`} className={buttonClass("secondary")}>View order</a>
       </div>
     </div>
   );

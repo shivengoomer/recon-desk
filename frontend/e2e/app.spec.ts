@@ -32,6 +32,9 @@ test("dashboard shows money at risk, partners and tax summary", async ({ page },
   await expect(page.getByText(/^₹[\d.,]+ (L|Cr)?$|^₹[\d,]+$/).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "By partner and age" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "TCS and TDS deducted" })).toBeVisible();
+  await expect(page.locator(".recharts-bar-rectangle").first()).toBeVisible();
+  await expect(page.locator(".recharts-pie-sector").first()).toBeVisible();
+  await page.waitForTimeout(1200); // let chart and count-up animations settle
   await noHorizontalScroll(page);
   await page.screenshot({ path: `e2e/shots/${info.project.name}-dashboard.png`, fullPage: true });
 });

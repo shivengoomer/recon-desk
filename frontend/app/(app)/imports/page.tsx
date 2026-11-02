@@ -17,7 +17,7 @@ function Step({ n, id, title, note }: { n: number; id: string; title: string; no
   return (
     <div className="mb-3 flex items-start gap-3">
       <span aria-hidden className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-caption text-on-primary">{n}</span>
-      <div><h2 id={id} className="text-display-xs">{title}</h2>{note && <p className="mt-0.5 text-body-sm text-body-mid">{note}</p>}</div>
+      <div><h2 id={id} className="font-display text-display-xs">{title}</h2>{note && <p className="mt-0.5 text-body-sm text-body-mid">{note}</p>}</div>
     </div>
   );
 }
@@ -236,14 +236,14 @@ export default function ImportsPage() {
           <Eyebrow>Import complete · {result.file_name}</Eyebrow>
           <dl className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-5">
             {([["Rows read", result.row_count], ["New", result.accepted_count], ["Updated", result.updated_count], ["Already imported", result.duplicate_count], ["Rejected", result.rejected_count]] as const).map(([l, v]) => (
-              <div key={l}><dt className="text-body-sm text-body-mid">{l}</dt><dd className="tabular text-display-xs text-ink">{num(v)}</dd></div>))}
+              <div key={l}><dt className="text-body-sm text-body-mid">{l}</dt><dd className="tabular font-display text-display-xs text-ink">{num(v)}</dd></div>))}
           </dl>
           {result.rejected_count > 0 && <div className="mt-4"><Button variant="secondary" onClick={() => download(`/api/imports/${result.id}/rejects.csv`, "rejects.csv")}>Download rejected rows</Button></div>}
           <p className="mt-4 text-body-sm text-body-mid">Next: run matching from the dashboard to refresh claims.</p>
         </Card>)}
 
       <section aria-labelledby="hist" className="mb-10">
-        <h2 id="hist" className="mb-3 text-display-xs">Mapping versions</h2>
+        <h2 id="hist" className="mb-3 font-display text-display-xs">Mapping versions</h2>
         {versions.loading && !versions.data ? <ListSkeleton rows={2} /> : versions.error ? <ErrorBanner message={versions.error} onRetry={versions.reload} /> :
           !versions.data?.length ? <EmptyState title="No saved mapping yet" hint="Upload a file and approve a mapping to save it for this source." /> : (
             <ul className="divide-y divide-hairline rounded-md border border-hairline bg-canvas">
@@ -261,7 +261,7 @@ export default function ImportsPage() {
       </section>
 
       <section aria-labelledby="rec">
-        <h2 id="rec" className="mb-3 text-display-xs">Recent imports</h2>
+        <h2 id="rec" className="mb-3 font-display text-display-xs">Recent imports</h2>
         {recent.loading && !recent.data ? <ListSkeleton rows={3} /> : recent.error ? <ErrorBanner message={recent.error} onRetry={recent.reload} /> :
           !recent.data?.length ? <EmptyState title="No imports yet" /> : (
             <ul className="divide-y divide-hairline rounded-md border border-hairline bg-canvas">
