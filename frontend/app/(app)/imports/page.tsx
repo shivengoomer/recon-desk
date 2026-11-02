@@ -144,6 +144,9 @@ export default function ImportsPage() {
         {kind === "orders" && <p className="mt-2 text-body-sm text-body-mid">If the file has a Channel column, map it and one file can cover every channel.</p>}
       </section>
 
+      {partners.error && <div className="mb-6"><ErrorBanner message={partners.error} onRetry={partners.reload} /></div>}
+      {!partnerId && !partners.error && <div className="mb-6"><ListSkeleton rows={2} /></div>}
+      {partnerId && (
       <section aria-labelledby="s2" className="mb-6">
         <h2 id="s2" className="mb-3 text-display-xs">2. Choose the file</h2>
         <div onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
@@ -155,6 +158,7 @@ export default function ImportsPage() {
           <Button variant="secondary" onClick={() => input.current?.click()} loading={busy === "inspect"}>{file ? "Choose a different file" : "Browse files"}</Button>
         </div>
       </section>
+      )}
 
       {error && <div className="mb-6"><ErrorBanner message={error} /></div>}
 
