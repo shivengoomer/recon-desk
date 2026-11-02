@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     llm_enabled: bool = False
     gemini_api_key: str = ""
     upload_max_mb: int = 25
+    registration_invite_code: str = ""
 
 
 settings = Settings()
