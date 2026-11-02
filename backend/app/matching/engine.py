@@ -38,6 +38,9 @@ def run_matching(db: Session, user_id: int | None, as_of: date | None = None,
     db.add(run)
     db.flush()
 
+    # Bulk loads leave stale planner statistics; without fresh ones the big joins pick nested loops.
+    for table in ("orders", "settlement_lines", "cod_remittances", "freight_charges", "rate_cards", "rate_card_lines"):
+        db.execute(text(f"ANALYZE {table}"))
     for stmt in (sql.LINK_SETTLEMENT, sql.LINK_COD, sql.LINK_FREIGHT_REF, sql.LINK_FREIGHT_AWB, sql.DELETE_CANCELLED):
         db.execute(text(stmt))
     reconcile = text(sql.RECONCILE).bindparams(bindparam("order_ids", type_=ARRAY(BigInteger)))

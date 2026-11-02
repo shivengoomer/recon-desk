@@ -24,4 +24,8 @@ Format: N. [area/feature] assumption, and why.
 21. [files] CSV and Excel (.xlsx) are accepted; no .xls. Max upload 25 MB (about 1 lakh rows). Duplicate rows are skipped via row hash.
 
 ## Known limits
-(fill in during hardening)
+- Benchmark (synthetic, 1 lakh orders + ~1.2 lakh partner lines, local Postgres 16): order import 4.4s, matching 8.9s, full seed-import-match 31s. Reproduce with `python -m scripts.seed --orders 100000 --out <dir> --import --reset`.
+- At that scale `scripts.evaluate` shows 100% / 100% (precision / recall) for freight claims, 100% / 97.6% for unremitted COD and 98.2% / 95.8% for short-paid. The gap comes from settlement lines with no order ID: equal-amount orders become suggestion candidates, so their claims are held until a person reviews them, and the true order can fall outside the top 3 candidates. On the 2,000-order seed it is 100% / 100%.
+- Match suggestions use heuristics (amount, date versus the partner's usual lag, reference tail); there is no LLM call yet, even though `LLM_ENABLED` exists.
+- `return_not_received` needs warehouse scans (optional depth) and is not built.
+- Login rate limiting is in-process memory, so it assumes one backend instance.

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from itertools import islice
 
-from sqlalchemy import literal_column, select
+from sqlalchemy import select, text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
@@ -177,25 +177,37 @@ def _insert_lines(db: Session, model, rows: list[dict]) -> int:
     return inserted
 
 
+_ORDER_COLS = ["channel_id", "order_ref", "order_date", "value", "payment_mode", "delivery_status", "delivered_on",
+               "courier_id", "awb", "weight_g", "batch_id", "row_hash"]
+
+
 def _upsert_orders(db: Session, rows: list[dict]) -> tuple[int, int]:
-    """Insert new orders; refresh delivery fields on changed ones. Returns (inserted, updated)."""
-    ins = upd = 0
-    for i in range(0, len(rows), CHUNK):
-        stmt = pg_insert(Order)
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["channel_id", "order_ref"],
-            set_=dict(delivery_status=stmt.excluded.delivery_status, delivered_on=stmt.excluded.delivered_on,
-                      courier_id=stmt.excluded.courier_id, awb=stmt.excluded.awb, weight_g=stmt.excluded.weight_g,
-                      value=stmt.excluded.value, payment_mode=stmt.excluded.payment_mode,
-                      batch_id=stmt.excluded.batch_id),
-            where=(Order.delivery_status != stmt.excluded.delivery_status) | (Order.value != stmt.excluded.value)
-                  | Order.delivered_on.is_distinct_from(stmt.excluded.delivered_on)
-                  | Order.awb.is_distinct_from(stmt.excluded.awb),
-        ).returning(literal_column("(xmax = 0)").label("inserted"))  # xmax = 0 marks a fresh insert
-        res = db.execute(stmt, rows[i:i + CHUNK]).all()
-        ins += sum(1 for r in res if r.inserted)
-        upd += sum(1 for r in res if not r.inserted)
-    return ins, upd
+    """COPY into a staging table, then one INSERT..SELECT..ON CONFLICT. Returns (inserted, updated).
+
+    Row-by-row ON CONFLICT through the ORM took ~77s for 1 lakh orders; COPY + a single statement is a few seconds.
+    """
+    if not rows:
+        return 0, 0
+    raw = db.connection().connection.driver_connection
+    with raw.cursor() as cur:
+        cur.execute("CREATE TEMP TABLE stg_orders (LIKE orders INCLUDING DEFAULTS) ON COMMIT DROP")
+        with cur.copy(f"COPY stg_orders ({', '.join(_ORDER_COLS)}) FROM STDIN") as cp:
+            for r in rows:
+                cp.write_row([getattr(r[c], "value", r[c]) for c in _ORDER_COLS])
+    cols = ", ".join(_ORDER_COLS)
+    res = db.execute(text(f"""
+        WITH up AS (
+          INSERT INTO orders ({cols}) SELECT {cols} FROM stg_orders
+          ON CONFLICT (channel_id, order_ref) DO UPDATE SET
+            delivery_status = EXCLUDED.delivery_status, delivered_on = EXCLUDED.delivered_on,
+            courier_id = EXCLUDED.courier_id, awb = EXCLUDED.awb, weight_g = EXCLUDED.weight_g,
+            value = EXCLUDED.value, payment_mode = EXCLUDED.payment_mode, batch_id = EXCLUDED.batch_id
+          WHERE orders.delivery_status <> EXCLUDED.delivery_status OR orders.value <> EXCLUDED.value
+             OR orders.delivered_on IS DISTINCT FROM EXCLUDED.delivered_on OR orders.awb IS DISTINCT FROM EXCLUDED.awb
+          RETURNING (xmax = 0) AS inserted)
+        SELECT count(*) FILTER (WHERE inserted), count(*) FILTER (WHERE NOT inserted) FROM up""")).one()
+    db.execute(text("DROP TABLE stg_orders"))
+    return res[0], res[1]
 
 
 @dataclass
