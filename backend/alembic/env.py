@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 
 from app.config import settings
 from app.db import Base
+import app.models  # noqa: F401  (register tables)
 
 target_metadata = Base.metadata
 

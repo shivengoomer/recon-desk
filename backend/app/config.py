@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     jwt_secret: str = ""
     jwt_expire_minutes: int = 60
     frontend_origin: str = ""
-    demo_analyst_password: str = ""
-    demo_admin_password: str = ""
+    demo_executive_password: str = ""
+    demo_cofounder_password: str = ""
     llm_enabled: bool = False
     gemini_api_key: str = ""
 
