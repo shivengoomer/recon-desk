@@ -1,5 +1,5 @@
 # Project rules (read every session)
-- Read BRIEF.md and ASSUMPTIONS.md before any work.
+- Read BRIEF.md and ASSUMPTIONS.md before any work. Read DESIGN.md before any UI work (it overrides prompts/06).
 - Product: D2C home brand order, payment and return reconciliation tool. Build the CORE BUILD slice end to end first.
 - Keep it simple: one FastAPI service, one Postgres. No queues, microservices or Redis.
 - Never commit secrets. Config via env vars; .env.example lists names only.
@@ -21,3 +21,7 @@
 - Backend: `cd backend && pip install -e ".[dev]" && alembic upgrade head && uvicorn app.main:app --reload`
 - Tests: `cd backend && pytest`
 - Frontend: `cd frontend && npm install && npm run dev`
+
+## Git
+- Commit messages are conventional and written as plain project history: no `Co-Authored-By` trailers, no "Generated with" lines, no tool attribution.
+- One logical change per commit.
