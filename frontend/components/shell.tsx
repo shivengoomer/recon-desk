@@ -150,10 +150,11 @@ function Frame({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Logo({ light }: { light?: boolean }) {
+/** Brand mark: a double ring. Uses currentColor so it follows the surrounding text colour. */
+export function Logo({ className }: { className?: string }) {
   return (
-    <span aria-hidden className={cn("flex h-8 w-8 items-center justify-center rounded-full", light ? "bg-mint text-ink" : "bg-mint text-ink ring-1 ring-ink")}>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8.5 6.5 12 13 4.5" /></svg>
-    </span>
+    <svg aria-hidden viewBox="0 0 256 256" fill="none" className={cn("h-8 w-8 shrink-0 text-ink", className)}>
+      <path fill="currentColor" d="M 128 0 C 57.308 0 0 57.308 0 128 C 0 198.692 57.308 256 128 256 C 198.692 256 256 198.692 256 128 L 224 128 C 224 181.019 181.019 224 128 224 C 74.98 224 32 181.019 32 128 C 32 74.98 74.98 32 128 32 Z M 128 56 C 88.236 56 56 88.236 56 128 C 56 167.764 88.236 200 128 200 C 167.764 200 200 167.764 200 128 L 168 128 C 168 150.091 150.091 168 128 168 C 105.909 168 88 150.091 88 128 C 88 105.909 105.909 88 128 88 Z" />
+    </svg>
   );
 }
