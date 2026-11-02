@@ -82,13 +82,13 @@ export default function LoginPage() {
       </section>
 
       {/* ── Right: form panel ─────────────────────────────────────────── */}
-      <section className="flex items-center justify-center bg-canvas px-4 py-12">
+      <section className="flex items-center justify-center bg-canvas px-6 py-12">
         <div className="w-full max-w-md">
 
-          {/* Mobile brand — links back to home */}
+          {/* Mobile brand — centered, links back to home */}
           <Link
             href="/"
-            className="font-display flex w-fit items-center gap-2.5 text-[20px] font-bold text-ink transition-opacity hover:opacity-70 lg:hidden"
+            className="font-display mx-auto mb-8 flex w-fit items-center gap-2.5 text-[20px] font-bold text-ink transition-opacity hover:opacity-70 lg:hidden"
           >
             <Logo />Recon Desk
           </Link>
