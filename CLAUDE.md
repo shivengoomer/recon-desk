@@ -1,6 +1,10 @@
 # Project rules (read every session)
 - Read BRIEF.md and ASSUMPTIONS.md before any work. Read DESIGN.md before any UI work (it overrides prompts/06).
-- Product: D2C home brand order, payment and return reconciliation tool. Build the CORE BUILD slice end to end first.
+- Product: order, settlement, COD and freight reconciliation for a D2C home-textiles brand (see BRIEF.md). Build the CORE BUILD slice end to end first: upload with saved column mapping, order-level matching, rate-card expected amounts, claims list, money-at-risk view. Roles: finance_executive and cofounder.
+- BRIEF.md overrides `prompts/` wherever they disagree (the kit assumed a different problem: gateway payments and refunds).
+- Matching and expected amounts are rules, never AI. AI only proposes column mappings and order-ID-less match suggestions; both need human approval and never auto-close.
+- Performance target: 1 lakh rows matched in under a minute. Use set-based SQL / bulk inserts, never per-row ORM loops.
+- TCS and TDS are shown separately, never counted as leakage. Mask personal data (DPDP Act 2023); do not ingest names, phones or addresses.
 - Keep it simple: one FastAPI service, one Postgres. No queues, microservices or Redis.
 - Never commit secrets. Config via env vars; .env.example lists names only.
 - Small commits with conventional messages (feat:, fix:, test:, docs:).
