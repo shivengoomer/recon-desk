@@ -18,6 +18,10 @@ export interface Dashboard {
   orders: number; status_counts: Record<string, number>; auto_match_rate: number | null; money_at_risk: string;
   by_partner: { partner_id: number; partner: string; total: string; count: number; buckets: Record<string, string> }[];
   by_type: Record<string, string>; pending_suggestions: number; unlinked_lines: number;
+  claims_pipeline: Record<"open" | "filed" | "recovered" | "rejected", { count: number; amount: string }>;
+  claims_older_than_60: { count: number; amount: string };
+  scorecard: { partner_id: number; partner: string; kind: "channel" | "courier"; orders: number; issues: number; settled_pct: number | null; at_risk: string }[];
+  freshness: Record<FileKind, { last_import: string; days_ago: number; rows: number } | null>;
 }
 export interface TaxRow { partner_id: number; partner: string; gross: string; fees: string; tcs: string; tds: string; lines: number }
 export interface Suggestion {

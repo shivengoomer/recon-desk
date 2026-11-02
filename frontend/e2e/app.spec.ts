@@ -59,9 +59,11 @@ test("dashboard shows money at risk, partners and tax summary", async ({ page },
   await expect(page.getByText(/^₹[\d.,]+ (L|Cr)?$|^₹[\d,]+$/).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "By partner and age" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "TCS and TDS deducted" })).toBeVisible();
-  await expect(page.locator(".recharts-bar-rectangle").first()).toBeVisible();
-  await expect(page.locator(".recharts-pie-sector").first()).toBeVisible();
-  await page.waitForTimeout(1200); // let chart and count-up animations settle
+  await expect(page.getByRole("img", { name: "Order status mix" })).toBeVisible();
+  await expect(page.getByRole("group", { name: "Money at risk by partner and age" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Recovery pipeline" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Action centre" })).toBeVisible();
+  await page.waitForTimeout(1500); // let the entrance and count-up animations settle
   await noHorizontalScroll(page);
   await page.screenshot({ path: `e2e/shots/${info.project.name}-dashboard.png`, fullPage: true });
 });
@@ -95,8 +97,16 @@ test("claims: list, update a claim with a note, export evidence", async ({ page 
   await dlg.getByLabel("Status").selectOption("rejected");
   await expect(dlg.getByRole("button", { name: "Save" })).toBeDisabled(); // rejection needs a note
   await dlg.getByLabel(/Note/).fill("e2e: raised in error");
-  await dlg.getByRole("button", { name: "Save" }).click();
+  const [saved] = await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "PATCH" && /\/api\/claims\/\d+$/.test(r.url())),
+    dlg.getByRole("button", { name: "Save" }).click(),
+  ]);
   await expect(page.getByText("Claim updated")).toBeVisible();
+  // restore the claim so test runs do not change the demo data
+  await page.evaluate(async ({ url }) => {
+    const token = sessionStorage.getItem("recon.token");
+    await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ status: "open", note: "" }) });
+  }, { url: saved.url() });
 });
 
 test("import: saved mapping is reused and re-uploading is idempotent", async ({ page }, info) => {
