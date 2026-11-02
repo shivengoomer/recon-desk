@@ -26,6 +26,7 @@ Format: N. [area/feature] assumption, and why.
 23. [frontend/ matching] "Run matching" is a global action in the top bar (both roles); pages refresh themselves after a run.
 24. [frontend/ design] The UI follows the client-supplied spring-mint / black / white system in `DESIGN.md` (Titillium Web headings, Inter body, pill buttons, 24px/40px cards). Status colours (red, amber, blue) are kept for data only: badges, difference figures and chart segments.
 25. [frontend/ landing page] Marketing copy avoids testimonials and user counts; the quote band states a product principle and the four stats (≈9s per 1 lakh orders, 20-row preview, 0 personal data stored, 4 report types) come from this project's own benchmark and rules.
+26. [auth / registration] Self-registration is invite-code only (`REGISTRATION_INVITE_CODE`); with no code configured the endpoint returns 404 and the sign-in page hides the option. New accounts are always finance executives; the co-founder role is only created by seeding or by a database change. Invite attempts share the in-memory rate limiter (5 failures per minute per IP).
 
 ## Known limits
 - Benchmark (synthetic, 1 lakh orders + ~1.2 lakh partner lines, local Postgres 16): order import 4.4s, matching 8.9s, full seed-import-match 31s. Reproduce with `python -m scripts.seed --orders 100000 --out <dir> --import --reset`.

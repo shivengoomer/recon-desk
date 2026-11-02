@@ -5,10 +5,37 @@ import { EXEC, FOUNDER, login, noHorizontalScroll } from "./helpers";
 test("wrong password shows an error and stays on login", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill(EXEC.email);
-  await page.getByLabel("Password").fill("nope-nope");
+  await page.getByLabel("Password", { exact: true }).fill("nope-nope");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.locator("main [role=alert]")).toContainText("Incorrect email or password");
   await expect(page).toHaveURL(/\/login/);
+});
+
+test("password fields can be shown and hidden", async ({ page }) => {
+  await page.goto("/login");
+  const pw = page.getByLabel("Password", { exact: true });
+  await pw.fill("secret-value");
+  await expect(pw).toHaveAttribute("type", "password");
+  await page.getByRole("button", { name: "Show password" }).click();
+  await expect(pw).toHaveAttribute("type", "text");
+  await page.getByRole("button", { name: "Hide password" }).click();
+  await expect(pw).toHaveAttribute("type", "password");
+});
+
+test("create an account with the invite code, then land on the dashboard as an executive", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByRole("tab", { name: "Create account" }).click();
+  await page.getByLabel("Full name").fill("E2E Tester");
+  await page.getByLabel("Email").fill(`e2e-${Date.now()}@recon.example`);
+  await page.getByLabel("Password", { exact: true }).fill("a-long-e2e-password");
+  await page.getByLabel("Invite code").fill("wrong-code");
+  await page.getByRole("button", { name: "Create account" }).click();
+  await expect(page.locator("main [role=alert]")).toContainText("invite code is not valid");
+  await page.getByLabel("Invite code").fill(process.env.E2E_INVITE_CODE ?? "join-recon-local");
+  await page.getByRole("button", { name: "Create account" }).click();
+  await expect(page).toHaveURL(/\/dashboard/);
+  await page.goto("/audit");
+  await expect(page).toHaveURL(/\/dashboard/); // executives cannot open the audit log
 });
 
 test("landing page presents the product and leads to sign in", async ({ page }, info) => {

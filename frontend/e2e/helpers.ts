@@ -6,7 +6,7 @@ export const FOUNDER = { email: "founder@recon.example", password: process.env.E
 export async function login(page: Page, who = EXEC) {
   await page.goto("/login");
   await page.getByLabel("Email").fill(who.email);
-  await page.getByLabel("Password").fill(who.password);
+  await page.getByLabel("Password", { exact: true }).fill(who.password);
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
 }

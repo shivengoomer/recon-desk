@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { Logo } from "@/components/shell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, PasswordInput } from "@/components/ui/input";
 import { ErrorBanner } from "@/components/ui/states";
-import { ApiError } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 const POINTS = [
@@ -16,26 +16,39 @@ const POINTS = [
 ];
 
 export default function LoginPage() {
-  const { user, ready, login } = useAuth();
+  const { user, ready, login, register } = useAuth();
   const router = useRouter();
+  const [mode, setMode] = useState<"signin" | "register">("signin");
+  const [canRegister, setCanRegister] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [invite, setInvite] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (ready && user) router.replace("/dashboard");
   }, [ready, user, router]);
+  useEffect(() => {
+    api<{ registration_enabled: boolean }>("/api/auth/config").then((c) => setCanRegister(c.registration_enabled)).catch(() => {});
+  }, []);
+
+  function switchMode(m: "signin" | "register") {
+    setMode(m);
+    setError(null);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
     try {
-      await login(email.trim(), password);
+      if (mode === "signin") await login(email.trim(), password);
+      else await register({ name: name.trim(), email: email.trim(), password, invite_code: invite.trim() });
       router.replace("/dashboard");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Could not sign in");
+      setError(err instanceof ApiError ? err.message : mode === "signin" ? "Could not sign in" : "Could not create the account");
     } finally {
       setBusy(false);
     }
@@ -43,7 +56,7 @@ export default function LoginPage() {
 
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
-      <section className="hidden flex-col justify-between bg-hero p-12 lg:flex">
+      <section className="bg-hero hidden flex-col justify-between p-12 lg:flex">
         <p className="font-display flex items-center gap-2.5 text-[22px] font-bold text-ink"><Logo />Recon Desk</p>
         <div>
           <h2 className="font-display max-w-md text-display-xl font-bold">Know where the money went.</h2>
@@ -55,16 +68,28 @@ export default function LoginPage() {
         </div>
         <p className="text-body-sm text-body-mid">Orders · Settlements · COD · Freight</p>
       </section>
-      <section className="flex items-center justify-center bg-canvas px-4 py-12 lg:bg-canvas">
+      <section className="flex items-center justify-center bg-canvas px-4 py-12">
         <div className="w-full max-w-md">
           <p className="font-display flex items-center gap-2.5 text-[20px] font-bold text-ink lg:hidden"><Logo />Recon Desk</p>
-          <h1 className="font-display mt-6 text-display-lg lg:mt-0">Sign in</h1>
-          <p className="mt-2 text-body-sm text-body-mid">Use your finance team account.</p>
+          {canRegister && (
+            <div role="tablist" aria-label="Account" className="mt-6 grid grid-cols-2 gap-1 rounded-full bg-soft p-1 lg:mt-0">
+              {([["signin", "Sign in"], ["register", "Create account"]] as const).map(([m, label]) => (
+                <button key={m} role="tab" aria-selected={mode === m} onClick={() => switchMode(m)}
+                  className={`min-h-11 rounded-full text-body-sm font-semibold transition-colors ${mode === m ? "bg-canvas text-ink shadow-layer-2" : "text-body-mid hover:text-ink"}`}>{label}</button>))}
+            </div>)}
+          <h1 className="font-display mt-6 text-display-lg">{mode === "signin" ? "Sign in" : "Create your account"}</h1>
+          <p className="mt-2 text-body-sm text-body-mid">{mode === "signin" ? "Use your finance team account." : "You need the invite code from your co-founder. New accounts are finance executives."}</p>
           <form onSubmit={submit} className="mt-8 flex flex-col gap-5">
             {error && <ErrorBanner message={error} />}
+            {mode === "register" && <Input label="Full name" autoComplete="name" required minLength={2} maxLength={120} value={name} onChange={(e) => setName(e.target.value)} />}
             <Input label="Email" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
-            <Input label="Password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-            <Button type="submit" loading={busy} className="mt-1">Sign in</Button>
+            <PasswordInput label="Password" autoComplete={mode === "signin" ? "current-password" : "new-password"} required minLength={mode === "register" ? 10 : undefined} value={password} onChange={(e) => setPassword(e.target.value)} />
+            {mode === "register" && (
+              <>
+                <p className="-mt-3 text-body-sm text-body-mid">At least 10 characters.</p>
+                <PasswordInput label="Invite code" autoComplete="off" required value={invite} onChange={(e) => setInvite(e.target.value)} />
+              </>)}
+            <Button type="submit" loading={busy} className="mt-1">{mode === "signin" ? "Sign in" : "Create account"}</Button>
           </form>
         </div>
       </section>
