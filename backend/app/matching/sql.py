@@ -51,7 +51,7 @@ WITH sl AS (
          sum(tds_amount) AS tds, count(*) AS n
   FROM settlement_lines WHERE order_id IS NOT NULL GROUP BY order_id
 ), cr AS (
-  SELECT order_id, sum(remitted_amount) AS recv, sum(cod_collected) AS coll, count(*) AS n
+  SELECT order_id, sum(remitted_amount) AS recv, sum(cod_collected) AS coll, count(*) AS n, min(courier_id) AS courier_id
   FROM cod_remittances WHERE order_id IS NOT NULL GROUP BY order_id
 ), fr AS (
   SELECT order_id, sum(charged_amount) AS billed, min(courier_id) AS courier_id
@@ -59,7 +59,7 @@ WITH sl AS (
 ), base AS (
   SELECT o.id, o.value, o.payment_mode, o.delivery_status,
          COALESCE(o.delivered_on, o.order_date) AS ref_date,
-         COALESCE(o.courier_id, fr.courier_id) AS courier_id,
+         COALESCE(o.courier_id, cr.courier_id, fr.courier_id) AS courier_id,
          cl.commission_pct, cl.fixed_fee, cl.shipping_fee, (cl.id IS NOT NULL) AS has_card,
          kl.base_rate, kl.cod_fee_pct, kl.cod_fee_min, (kl.id IS NOT NULL) AS has_freight_card,
          CASE WHEN o.payment_mode = 'cod' THEN COALESCE(cu.settlement_due_days, ch.settlement_due_days)
@@ -73,7 +73,7 @@ WITH sl AS (
   LEFT JOIN sl ON sl.order_id = o.id
   LEFT JOIN cr ON cr.order_id = o.id
   LEFT JOIN fr ON fr.order_id = o.id
-  LEFT JOIN partners cu ON cu.id = COALESCE(o.courier_id, fr.courier_id)
+  LEFT JOIN partners cu ON cu.id = COALESCE(o.courier_id, cr.courier_id, fr.courier_id)
   LEFT JOIN LATERAL (
     SELECT rl.* FROM rate_cards rc JOIN rate_card_lines rl ON rl.rate_card_id = rc.id
     WHERE rc.partner_id = o.channel_id AND o.order_date >= rc.effective_from
@@ -83,7 +83,7 @@ WITH sl AS (
   ) cl ON true
   LEFT JOIN LATERAL (
     SELECT rl.* FROM rate_cards rc JOIN rate_card_lines rl ON rl.rate_card_id = rc.id
-    WHERE rc.partner_id = COALESCE(o.courier_id, fr.courier_id) AND o.order_date >= rc.effective_from
+    WHERE rc.partner_id = COALESCE(o.courier_id, cr.courier_id, fr.courier_id) AND o.order_date >= rc.effective_from
       AND (rc.effective_to IS NULL OR o.order_date <= rc.effective_to) AND rl.weight_min_g IS NOT NULL
       AND COALESCE(o.weight_g, 0) BETWEEN rl.weight_min_g AND COALESCE(rl.weight_max_g, 2147483647)
     ORDER BY rc.effective_from DESC, rl.id LIMIT 1
@@ -146,9 +146,9 @@ ON CONFLICT (order_id) DO UPDATE SET
 CLAIM_CANDIDATES = """
 SELECT o.id AS order_id,
        CASE WHEN r.status = 'short_paid' THEN
-              CASE WHEN o.payment_mode = 'cod' THEN COALESCE(o.courier_id, o.channel_id) ELSE o.channel_id END
+              CASE WHEN o.payment_mode = 'cod' THEN COALESCE(o.courier_id, (SELECT courier_id FROM cod_remittances WHERE order_id = o.id LIMIT 1), (SELECT courier_id FROM freight_charges WHERE order_id = o.id LIMIT 1), o.channel_id) ELSE o.channel_id END
             WHEN r.status = 'unpaid_past_due' THEN
-              CASE WHEN o.payment_mode = 'cod' THEN COALESCE(o.courier_id, o.channel_id) ELSE o.channel_id END
+              CASE WHEN o.payment_mode = 'cod' THEN COALESCE(o.courier_id, (SELECT courier_id FROM cod_remittances WHERE order_id = o.id LIMIT 1), (SELECT courier_id FROM freight_charges WHERE order_id = o.id LIMIT 1), o.channel_id) ELSE o.channel_id END
        END AS partner_id,
        CASE WHEN r.status = 'short_paid' THEN 'short_paid'
             WHEN r.status = 'unpaid_past_due' AND o.payment_mode = 'cod' THEN 'unremitted_cod'
@@ -162,7 +162,7 @@ WHERE r.status IN ('short_paid', 'unpaid_past_due')
   AND NOT (r.status = 'unpaid_past_due' AND EXISTS (
         SELECT 1 FROM match_suggestions ms WHERE ms.candidate_order_id = o.id AND ms.status = 'pending'))
 UNION ALL
-SELECT o.id, COALESCE(o.courier_id, (SELECT courier_id FROM freight_charges WHERE order_id = o.id LIMIT 1)),
+SELECT o.id, COALESCE(o.courier_id, (SELECT courier_id FROM freight_charges WHERE order_id = o.id LIMIT 1), (SELECT courier_id FROM cod_remittances WHERE order_id = o.id LIMIT 1)),
        'freight_overcharge', r.freight_difference, COALESCE(o.delivered_on, o.order_date), r.breakdown,
        r.freight_difference, o.courier_id
 FROM order_reconciliation r JOIN orders o ON o.id = r.order_id
