@@ -2,10 +2,9 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Drawer } from "@/components/ui/drawer";
 import { DiffBar, Money, PageHeader, StatusBadge } from "@/components/ui/bits";
-import { Pagination, Select } from "@/components/ui/fields";
+import { Pagination } from "@/components/ui/fields";
 import { Chips } from "@/components/ui/chips";
 import { EmptyState, ErrorBanner, ListSkeleton } from "@/components/ui/states";
 import { api, qs } from "@/lib/api";
@@ -44,29 +43,45 @@ function Orders() {
           ...["unpaid_past_due", "short_paid", "freight_overcharged", "over_paid", "pending", "settled"].map((k) => ({ value: k, label: STATUS_LABEL[k], count: counts.data?.status_counts[k] ?? 0 })),
         ]} />
       </div>
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="w-full sm:max-w-md">
-          <Input
-            label="Search order ID"
-            placeholder="ORD-W-204118"
+      {/* Filter bar — unified inline pill strip */}
+      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        {/* Search — grows to fill available space */}
+        <div className="relative flex-1">
+          <span aria-hidden className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-mute">
+            <Search size={15} />
+          </span>
+          <input
+            aria-label="Search order ID"
+            placeholder="Search order ID — e.g. ORD-W-204118"
             value={q}
             onChange={(e) => set(setQ)(e.target.value)}
-            icon={<Search size={16} aria-hidden />}
+            className="min-h-10 w-full rounded-md border border-hairline bg-canvas pl-9 pr-4 text-body-sm text-ink placeholder:text-mute transition-colors focus:border-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
           />
         </div>
-        <div className="w-full sm:w-60">
-          <Select label="Channel" value={channel} onChange={(e) => set(setChannel)(e.target.value)}>
+
+        {/* Channel select — fixed width */}
+        <div className="relative w-full sm:w-52">
+          <select
+            aria-label="Filter by channel"
+            value={channel}
+            onChange={(e) => set(setChannel)(e.target.value)}
+            className="min-h-10 w-full appearance-none rounded-md border border-hairline bg-canvas pl-3.5 pr-9 text-body-sm text-ink transition-colors focus:border-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+          >
             <option value="">All channels</option>
             {partners.data?.filter((p) => p.kind === "channel").map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </Select>
+          </select>
+          <svg aria-hidden viewBox="0 0 16 16" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-mute" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </div>
+
+        {/* Clear pill — only when active */}
         {(q || channel || status) && (
           <button
             type="button"
             onClick={() => { setQ(""); setChannel(""); setStatus(""); setPage(1); }}
-            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full px-4 text-body-sm font-semibold text-body-mid hover:bg-soft hover:text-ink transition-colors sm:self-end"
+            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md border border-hairline bg-canvas px-4 text-body-sm font-medium text-body-mid transition-colors hover:border-ink hover:text-ink"
           >
-            Clear filters
+            <svg aria-hidden viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round" /></svg>
+            Clear
           </button>
         )}
       </div>

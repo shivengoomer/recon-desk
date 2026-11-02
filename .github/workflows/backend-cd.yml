@@ -70,3 +70,4 @@ jobs:
           echo "Migrations already applied. Safe to roll the new container / dyno."
         # Example for Render (uncomment and set RENDER_DEPLOY_HOOK secret):
         # run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
