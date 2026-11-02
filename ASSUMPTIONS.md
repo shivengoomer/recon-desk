@@ -22,6 +22,8 @@ Format: N. [area/feature] assumption, and why.
 19. [AI] Suggestions (column mappings, missing-order-ID matches) are heuristics-first with an optional LLM behind `LLM_ENABLED`; mappings are previewed on 20 rows, approved before saving, and stored as versions that can be rolled back. Suggested matches sit in a pending state and never create claims or close an order.
 20. [claims] A claim is unique per (order, type); evidence is a JSON snapshot of the expected-vs-actual breakdown plus source rows, exportable as CSV.
 21. [files] CSV and Excel (.xlsx) are accepted; no .xls. Max upload 25 MB (about 1 lakh rows). Duplicate rows are skipped via row hash.
+22. [frontend/ landing page] A public marketing page lives at `/`; its preview figures are illustrative (the three example orders come from the brief's sample data). There is no demo-request form, so the only call to action is Sign in.
+23. [frontend/ matching] "Run matching" is a global action in the top bar (both roles); pages refresh themselves after a run.
 
 ## Known limits
 - Benchmark (synthetic, 1 lakh orders + ~1.2 lakh partner lines, local Postgres 16): order import 4.4s, matching 8.9s, full seed-import-match 31s. Reproduce with `python -m scripts.seed --orders 100000 --out <dir> --import --reset`.

@@ -11,6 +11,8 @@ Source of truth for all UI work. Based on the Webflow-style design spec supplied
 - **Category cards** (purple/pink/blue/orange/green) are used on the dashboard/landing for Orders, Payments, Returns, Refunds, Discrepancies, not for actions.
 - **Font:** Inter (variable, weights 400/500/550/600, `ss01`) substitutes WF Visual Sans. Mono: DM Mono / Inconsolata for references, IDs and amounts in tables (tabular figures).
 - **Money:** right-aligned, tabular numerals, rupee symbol, 2 decimals.
+- **App surface:** the signed-in app sits on `app` (#fafafa) with white (`canvas`) cards and hairline borders so panels lift without shadows; the marketing page stays on pure white.
+- **Hero numbers:** the headline money figure uses `card-feature-dark` (near-black) at display size; claim types use the accent category cards, which are links and never buttons.
 - **No dead buttons**, every list has loading / empty / error states, mobile-first (touch targets >= 44px).
 
 ---
