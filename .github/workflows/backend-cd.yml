@@ -46,6 +46,15 @@ jobs:
       - name: Install dependencies
         run: pip install -e .
 
+      # Guard: fail fast if DATABASE_URL secret is missing or empty
+      - name: Check DATABASE_URL is set
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "❌ DATABASE_URL is empty. Add NEON_PROD_DATABASE_URL to GitHub repo secrets."
+            exit 1
+          fi
+          echo "✅ DATABASE_URL is set ($(echo $DATABASE_URL | cut -d'@' -f2 | cut -d'/' -f1))"
+
       # Run migrations against the PRODUCTION Neon database before the new code goes live
       - name: Run Alembic migrations (prod)
         run: alembic upgrade head

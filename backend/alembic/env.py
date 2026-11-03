@@ -7,6 +7,12 @@ import app.models  # noqa: F401  (register tables)
 
 target_metadata = Base.metadata
 
+if not settings.database_url:
+    raise RuntimeError(
+        "DATABASE_URL is not set. "
+        "Add NEON_PROD_DATABASE_URL to GitHub Secrets and ensure it maps to DATABASE_URL in the workflow."
+    )
+
 
 def run_migrations_offline() -> None:
     context.configure(url=settings.database_url, target_metadata=target_metadata, literal_binds=True)
