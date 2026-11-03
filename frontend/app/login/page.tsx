@@ -104,22 +104,20 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Mode tabs — only visible when registration is enabled */}
-          {canRegister && (
-            <div role="tablist" aria-label="Account" className="mt-2 grid grid-cols-2 gap-1 rounded-full bg-soft p-1 lg:mt-0">
-              {([ ["signin", "Sign in"], ["register", "Create account"] ] as const).map(([m, label]) => (
-                <button
-                  key={m}
-                  role="tab"
-                  aria-selected={mode === m}
-                  onClick={() => switchMode(m)}
-                  className={`min-h-11 rounded-full text-body-sm font-semibold transition-colors ${mode === m ? "bg-canvas text-ink shadow-layer-2" : "text-body-mid hover:text-ink"}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Mode tabs — always shown */}
+          <div role="tablist" aria-label="Account" className="mt-2 grid grid-cols-2 gap-1 rounded-full bg-soft p-1 lg:mt-0">
+            {([ ["signin", "Sign in"], ["register", "Create account"] ] as const).map(([m, label]) => (
+              <button
+                key={m}
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => switchMode(m)}
+                className={`min-h-11 rounded-full text-body-sm font-semibold transition-colors ${mode === m ? "bg-canvas text-ink shadow-layer-2" : "text-body-mid hover:text-ink"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
           {/* Back link — shown when in register mode without tabs (or as extra affordance) */}
           {mode === "register" && (

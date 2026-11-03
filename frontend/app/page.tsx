@@ -1,6 +1,7 @@
 "use client";
 import { CheckCheck, FileText, FileWarning, Layers, Plus, ScanSearch, Search, Truck, Wallet } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Logo } from "@/components/shell";
 import { buttonClass } from "@/components/ui/button";
 import { FeatureCard } from "@/components/ui/card";
@@ -43,6 +44,16 @@ const FAQ = [
 ];
 
 export default function Landing() {
+  const [asciiCellSize, setAsciiCellSize] = useState(18);
+  useEffect(() => {
+    function update() {
+      const w = window.innerWidth;
+      setAsciiCellSize(w < 640 ? 12 : w < 1024 ? 14 : 18);
+    }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
   return (
     <div className="bg-canvas">
       {/* Mint progress bar with gradient glow that tracks scroll */}
@@ -50,13 +61,13 @@ export default function Landing() {
 
       {/* ── Hero wrapper encompassing both the frosted navbar and hero stage ── */}
       <div className="relative isolate overflow-hidden bg-hero">
-        {/* Ambient interactive ASCII backdrop — elegant, clean contrast without harsh green tint */}
-        <div className="pointer-events-auto absolute inset-0 z-0 [mask-image:radial-gradient(ellipse_85%_70%_at_50%_15%,#000_25%,transparent_85%)]">
+        {/* Ambient interactive ASCII backdrop — responsive cell size for mobile/iPad */}
+        <div className="pointer-events-auto absolute inset-0 z-0 [mask-image:radial-gradient(ellipse_100%_65%_at_50%_10%,#000_20%,transparent_80%)] sm:[mask-image:radial-gradient(ellipse_90%_68%_at_50%_12%,#000_22%,transparent_82%)] lg:[mask-image:radial-gradient(ellipse_85%_70%_at_50%_15%,#000_25%,transparent_85%)]">
           <GradientASCII
             shape="horizon"
             colors={['#0f2e22', '#184735', '#246b50', '#00f0a0', '#a8fcd7']}
             characters=" ·:+*x#@"
-            cellSize={18}
+            cellSize={asciiCellSize}
             density={0.56}
             glyphOpacity={0.5}
             gradientOpacity={0.08}
@@ -88,12 +99,12 @@ export default function Landing() {
         </header>
 
         <section className="relative z-10">
-            <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-4 py-16 md:px-8 lg:grid-cols-[1.1fr_1fr] lg:py-24">
+            <div className="mx-auto grid max-w-[1200px] items-center gap-8 px-4 py-12 md:gap-12 md:px-8 md:py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
 
               {/* Left copy — staggered reveal */}
               <RevealGroup className="flex flex-col">
                 <Reveal>
-                  <h1 className="font-display mt-6 text-[48px] font-bold leading-[1.04] tracking-[-1px] md:text-display-xxl">
+                  <h1 className="font-display mt-4 text-[36px] font-bold leading-[1.04] tracking-[-1px] sm:text-[44px] md:text-[48px] md:mt-6 lg:text-display-xxl">
                     Find every rupee your partners owe you.
                   </h1>
                 </Reveal>

@@ -57,17 +57,24 @@ jobs:
       - name: Run Alembic migrations (prod)
         run: alembic upgrade head
 
-      # ── Replace the step below with your actual host's deploy command ──────
-      # Examples:
-      #   Railway:  railway up --service backend
-      #   Render:   curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-      #   Fly.io:   flyctl deploy --remote-only
-      #   Docker:   docker build & push, then SSH + docker pull + restart
-      # -----------------------------------------------------------------------
-      - name: Deploy
+      # ── Package the backend for Azure App Service zip deploy ─────────────
+      - name: Zip backend for deployment
         run: |
-          echo "🚀 Deploy step — replace this with your hosting provider's command."
-          echo "Migrations already applied. Safe to roll the new container / dyno."
-        # Example for Render (uncomment and set RENDER_DEPLOY_HOOK secret):
-        # run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          zip -r ../backend-deploy.zip . \
+            --exclude "*.pyc" \
+            --exclude "*/__pycache__/*" \
+            --exclude "*/.pytest_cache/*" \
+            --exclude "*/tests/*" \
+            --exclude ".git/*"
+
+      # ── Deploy to Azure App Service ───────────────────────────────────────
+      # Secret required: AZURE_WEBAPP_PUBLISH_PROFILE
+      #   Azure Portal → App Services → recon-desk → Overview → Download publish profile
+      #   Add the entire XML contents as a GitHub secret named AZURE_WEBAPP_PUBLISH_PROFILE
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: recon-desk
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: backend-deploy.zip
 
