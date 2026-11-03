@@ -44,11 +44,17 @@ const FAQ = [
 ];
 
 export default function Landing() {
-  const [asciiCellSize, setAsciiCellSize] = useState(18);
+  const [asciiProps, setAsciiProps] = useState({ cellSize: 18, density: 0.56, glyphOpacity: 0.5 });
   useEffect(() => {
     function update() {
       const w = window.innerWidth;
-      setAsciiCellSize(w < 640 ? 12 : w < 1024 ? 14 : 18);
+      if (w < 640) {
+        setAsciiProps({ cellSize: 14, density: 0.28, glyphOpacity: 0.22 });
+      } else if (w < 1024) {
+        setAsciiProps({ cellSize: 15, density: 0.4, glyphOpacity: 0.35 });
+      } else {
+        setAsciiProps({ cellSize: 18, density: 0.56, glyphOpacity: 0.5 });
+      }
     }
     update();
     window.addEventListener("resize", update);
@@ -62,14 +68,14 @@ export default function Landing() {
       {/* ── Hero wrapper encompassing both the frosted navbar and hero stage ── */}
       <div className="relative isolate overflow-hidden bg-hero">
         {/* Ambient interactive ASCII backdrop — responsive cell size for mobile/iPad */}
-        <div className="pointer-events-auto absolute inset-0 z-0 [mask-image:radial-gradient(ellipse_100%_65%_at_50%_10%,#000_20%,transparent_80%)] sm:[mask-image:radial-gradient(ellipse_90%_68%_at_50%_12%,#000_22%,transparent_82%)] lg:[mask-image:radial-gradient(ellipse_85%_70%_at_50%_15%,#000_25%,transparent_85%)]">
+        <div className="pointer-events-auto absolute inset-0 z-0 [mask-image:radial-gradient(ellipse_120%_40%_at_50%_0%,#000_10%,transparent_70%)] sm:[mask-image:radial-gradient(ellipse_100%_55%_at_50%_8%,#000_18%,transparent_78%)] lg:[mask-image:radial-gradient(ellipse_85%_70%_at_50%_15%,#000_25%,transparent_85%)]">
           <GradientASCII
             shape="horizon"
             colors={['#0f2e22', '#184735', '#246b50', '#00f0a0', '#a8fcd7']}
             characters=" ·:+*x#@"
-            cellSize={asciiCellSize}
-            density={0.56}
-            glyphOpacity={0.5}
+            cellSize={asciiProps.cellSize}
+            density={asciiProps.density}
+            glyphOpacity={asciiProps.glyphOpacity}
             gradientOpacity={0.08}
             glow={0.2}
             flow={0.5}
