@@ -1,5 +1,5 @@
 "use client";
-import { CheckCheck, FileText, FileWarning, Layers, Plus, ScanSearch, Search, Truck, Wallet } from "lucide-react";
+import { ArrowUpRight, CheckCheck, ChevronDown, FileText, FileWarning, Layers, Plus, ScanSearch, Search, Truck, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/shell";
@@ -89,18 +89,58 @@ export default function Landing() {
           />
         </div>
 
-        {/* ── Frosted Glass Nav — reveals the dynamic ASCII gradient beneath ── */}
-        <header className="sticky top-0 z-30 border-b border-ink/5 bg-canvas/30 backdrop-blur-md transition-all duration-300">
-          <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3.5 md:px-8">
-            <Link href="/" className="font-display flex items-center gap-2.5 text-[22px] font-bold text-ink">
-              <Logo />Recon Desk
+        {/* ── Modern Floating Header & Standalone Action Button ── */}
+        <header className="sticky top-3 z-30 mx-auto w-full max-w-[1220px] px-3 sm:px-4 md:top-4 md:px-6 transition-all duration-300">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Main navbar container — clean, frosted glass aesthetic */}
+            <div className="relative flex flex-1 items-center justify-between rounded-[22px] border border-black/[0.08] bg-canvas/80 px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-xl sm:px-5 sm:py-2.5 md:rounded-[24px]">
+              
+              {/* Left: Brand Logo & Name */}
+              <Link href="/" className="font-display flex items-center gap-2.5 text-[19px] font-bold tracking-tight text-ink md:text-[21px] shrink-0">
+                <Logo />Recon Desk
+              </Link>
+
+              {/* Middle: Navigation links & dropdown */}
+              <nav aria-label="Sections" className="hidden items-center gap-6 lg:gap-8 md:flex">
+                <a
+                  href="#catches"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-black/[0.04] px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-black/[0.08]"
+                >
+                  Use Cases
+                  <ChevronDown size={12} strokeWidth={2.5} className="text-body-mid" />
+                </a>
+                {[["#demo", "Live demo"], ["#catches", "What it catches"], ["#how", "How it works"], ["#faq", "FAQ"]].map(([h, l]) => (
+                  <a key={h} href={h} className="text-body-sm font-medium text-body-mid transition-colors hover:text-ink">
+                    {l}
+                  </a>
+                ))}
+              </nav>
+
+              {/* Right: Actions */}
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <Link
+                  href="/login"
+                  className="rounded-full px-3.5 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-black/[0.05] sm:px-4 sm:py-2 sm:text-body-sm"
+                >
+                  Sign in
+                </Link>
+                <a
+                  href="#demo"
+                  className="whitespace-nowrap rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-canvas shadow-layer-1 transition-all hover:bg-ink/90 hover:scale-[1.02] active:scale-[0.98] sm:px-5 sm:py-2 sm:text-body-sm"
+                >
+                  Try demo
+                </a>
+              </div>
+            </div>
+
+            {/* Standalone dark rounded action button */}
+            <Link
+              href="/login"
+              aria-label="Open portal"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[20px] bg-ink text-canvas shadow-layer-2 transition-all hover:bg-ink/90 hover:scale-[1.04] active:scale-[0.96] sm:h-12 sm:w-12 sm:rounded-[22px]"
+            >
+              <ArrowUpRight size={19} strokeWidth={2.4} />
             </Link>
-            <nav aria-label="Sections" className="hidden items-center gap-8 md:flex">
-              {[["#demo", "Live demo"], ["#catches", "What it catches"], ["#how", "How it works"], ["#faq", "FAQ"]].map(([h, l]) => (
-                <a key={h} href={h} className="text-body-sm font-semibold text-ink hover:underline">{l}</a>
-              ))}
-            </nav>
-            <Link href="/login" className={buttonClass("primary", "!min-h-10 !rounded-[18px] !px-5 !py-2 !text-body-sm")}>Sign in</Link>
           </div>
         </header>
 
