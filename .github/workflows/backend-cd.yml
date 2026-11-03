@@ -59,6 +59,10 @@ jobs:
       - name: Run Alembic migrations (prod)
         run: alembic upgrade head
 
+      # ── Export requirements.txt so Azure Oryx installs packages on the server ──
+      - name: Export requirements.txt
+        run: pip freeze > requirements.txt
+
       # ── Package the backend for Azure App Service zip deploy ─────────────
       - name: Zip backend for deployment
         run: |
