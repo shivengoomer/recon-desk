@@ -28,7 +28,7 @@ jobs:
         working-directory: backend
 
     env:
-      DATABASE_URL: ${{ secrets.NEON_PROD_DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       FRONTEND_ORIGIN: ${{ secrets.FRONTEND_ORIGIN }}
       DEMO_EXECUTIVE_PASSWORD: ${{ secrets.DEMO_EXECUTIVE_PASSWORD }}
