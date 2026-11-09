@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/shell";
 import { buttonClass } from "@/components/ui/button";
 import { FeatureCard } from "@/components/ui/card";
+import { ExpandCards } from "@/components/ui/expand-cards";
 import { GradientASCII } from "@/components/ui/gradient-ascii";
 import {
   AnimatedNumber,
@@ -13,7 +14,6 @@ import {
   Reveal,
   RevealGroup,
   ScrollProgressBar,
-  SpotlightCard,
 } from "@/components/ui/scroll-motion";
 
 const STATS = [
@@ -24,12 +24,12 @@ const STATS = [
 ];
 
 const CATCHES = [
-  { icon: Wallet,      title: "Short-paid settlements",  text: "Compare what a marketplace paid with what its rate card says it should, per order, net of fees." },
-  { icon: FileWarning, title: "Unremitted COD",           text: "Cash collected by couriers that never reached your account, aged from the day it fell due." },
-  { icon: Truck,       title: "Freight overcharges",      text: "Wrong weight slabs and surcharges, caught by recomputing every freight invoice line." },
-  { icon: Layers,      title: "Formats that change",      text: "A partner renames a column? Review a suggested mapping, approve it, and roll back any time." },
-  { icon: ScanSearch,  title: "TCS and TDS, kept apart",  text: "Statutory deductions are shown per partner and never mistaken for leakage." },
-  { icon: Search,      title: "Missing order IDs",        text: "Rows with no usable order ID get ranked match suggestions. A person confirms; nothing closes automatically." },
+  { icon: Wallet,      title: "Short-paid settlements",  text: "Compare what a marketplace paid with what its rate card says it should, per order, net of fees.", detail: "Sample: expected ₹899, received ₹862, short ₹37" },
+  { icon: FileWarning, title: "Unremitted COD",           text: "Cash collected by couriers that never reached your account, aged from the day it fell due.", detail: "Sample: ₹1,409 collected, ₹0 remitted past due" },
+  { icon: Truck,       title: "Freight overcharges",      text: "Wrong weight slabs and surcharges, caught by recomputing every freight invoice line.", detail: "Billed vs rate-card slab, flagged above ₹10" },
+  { icon: Layers,      title: "Formats that change",      text: "A partner renames a column? Review a suggested mapping, approve it, and roll back any time.", detail: "20-row preview, versioned, one-click rollback" },
+  { icon: ScanSearch,  title: "TCS and TDS, kept apart",  text: "Statutory deductions are shown per partner and never mistaken for leakage.", detail: "Added back before judging, shown per partner" },
+  { icon: Search,      title: "Missing order IDs",        text: "Rows with no usable order ID get ranked match suggestions. A person confirms; nothing closes automatically.", detail: "Ranked by amount 55%, date 30%, reference 15%" },
 ];
 
 const TICKER = ["Short-paid settlement", "Unremitted COD", "Freight overcharge", "Wrong weight slab", "Missing order ID", "TCS and TDS shown apart", "Partner format changed", "Claim with evidence"];
@@ -251,19 +251,9 @@ export default function Landing() {
             </Reveal>
           </RevealGroup>
 
-          <RevealGroup className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {CATCHES.map(({ icon: Icon, title, text }, i) => (
-              <Reveal key={title} delay={i * 0.07}>
-                <SpotlightCard className="h-full p-6 md:p-8">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-mint shadow-sm">
-                    <Icon size={22} aria-hidden />
-                  </span>
-                  <h3 className="font-display mt-6 text-display-xs">{title}</h3>
-                  <p className="mt-2 text-body-sm text-body-mid">{text}</p>
-                </SpotlightCard>
-              </Reveal>
-            ))}
-          </RevealGroup>
+          <Reveal className="mt-12">
+            <ExpandCards items={CATCHES} />
+          </Reveal>
         </section>
 
         {/* ── Marquee ticker ──────────────────────────────────────────────── */}
