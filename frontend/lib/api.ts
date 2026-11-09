@@ -7,21 +7,43 @@ export class ApiError extends Error {
   }
 }
 
-export const tokenStore = {
-  get: (): string | null => {
-    try {
-      return sessionStorage.getItem(TOKEN_KEY);
-    } catch {
+// The session lives 7 days from sign-in and survives closing the tab (localStorage).
+// Expiry is enforced here as well as by the server's token lifetime.
+export const SESSION_DAYS = 7;
+const SESSION_MS = SESSION_DAYS * 24 * 60 * 60 * 1000;
+
+interface StoredSession {
+  token: string;
+  expiresAt: number;
+}
+
+function readSession(): StoredSession | null {
+  try {
+    const raw = localStorage.getItem(TOKEN_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw) as StoredSession;
+    if (typeof s.token !== "string" || typeof s.expiresAt !== "number" || Date.now() >= s.expiresAt) {
+      localStorage.removeItem(TOKEN_KEY);
       return null;
     }
-  },
+    return s;
+  } catch {
+    return null;
+  }
+}
+
+export const tokenStore = {
+  get: (): string | null => readSession()?.token ?? null,
+  expiresAt: (): number | null => readSession()?.expiresAt ?? null,
   set: (t: string) => {
     try {
-      sessionStorage.setItem(TOKEN_KEY, t);
+      const s: StoredSession = { token: t, expiresAt: Date.now() + SESSION_MS };
+      localStorage.setItem(TOKEN_KEY, JSON.stringify(s));
     } catch {}
   },
   clear: () => {
     try {
+      localStorage.removeItem(TOKEN_KEY);
       sessionStorage.removeItem(TOKEN_KEY);
     } catch {}
   },

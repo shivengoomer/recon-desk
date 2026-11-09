@@ -21,6 +21,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     api<User>("/api/auth/me").then(setUser).catch(() => tokenStore.clear()).finally(() => setReady(true));
   }, []);
 
+  const logout = useCallback(() => {
+    tokenStore.clear();
+    setUser(null);
+    location.assign("/login");
+  }, []);
+
+  // Sign out automatically when the 7-day session ends, and when another tab signs out.
+  useEffect(() => {
+    if (!user) return;
+    const exp = tokenStore.expiresAt();
+    const timer = exp ? setTimeout(() => logout(), Math.max(0, exp - Date.now())) : undefined;
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "recon.token" && !e.newValue) {
+        setUser(null);
+        location.assign("/login");
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => {
+      if (timer) clearTimeout(timer);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const login = useCallback(async (email: string, password: string) => {
     const res = await api<{ access_token: string; user: User }>("/api/auth/login", { json: { email, password } });
     tokenStore.set(res.access_token);
@@ -30,11 +54,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await api<{ access_token: string; user: User }>("/api/auth/register", { json: input });
     tokenStore.set(res.access_token);
     setUser(res.user);
-  }, []);
-  const logout = useCallback(() => {
-    tokenStore.clear();
-    setUser(null);
-    location.assign("/login");
   }, []);
 
   return <Ctx.Provider value={{ user, ready, login, register, logout }}>{children}</Ctx.Provider>;
