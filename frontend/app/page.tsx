@@ -251,7 +251,7 @@ export default function Landing() {
             </Reveal>
           </RevealGroup>
 
-          <Reveal className="mt-12">
+          <Reveal solo className="mt-12">
             <ExpandCards items={CATCHES} />
           </Reveal>
         </section>
