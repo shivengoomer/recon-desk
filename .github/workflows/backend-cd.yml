@@ -1,86 +1,110 @@
-name: Backend CD
+name: Backend CI/CD (Azure VM SSH)
 
 on:
+  pull_request:
+    paths:
+      - "backend/**"
   push:
     branches: ["main"]
     paths:
       - "backend/**"
+      - "docker-compose.prod.yml"
       - ".github/workflows/backend-cd.yml"
-  # Can also be triggered manually for a forced redeploy
   workflow_dispatch:
 
-# Only one deploy at a time
 concurrency:
   group: backend-cd
-  cancel-in-progress: false   # finish the in-flight deploy, don't cancel it
-
-env:
-  PYTHON_VERSION: "3.12"
+  cancel-in-progress: false
 
 jobs:
-  # ─── Deploy ──────────────────────────────────────────────────────────────────
-  deploy:
-    name: Deploy to production
+  test:
+    name: Backend tests (pytest + Postgres)
     runs-on: ubuntu-latest
-    environment: production
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: recon
+          POSTGRES_PASSWORD: recon_ci_only
+          POSTGRES_DB: recon
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U recon" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://recon:recon_ci_only@localhost:5432/recon
+      JWT_SECRET: ci-only-secret-0123456789abcdef
     defaults:
       run:
         working-directory: backend
-
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      FRONTEND_ORIGIN: ${{ secrets.FRONTEND_ORIGIN }}
-      DEMO_EXECUTIVE_PASSWORD: ${{ secrets.DEMO_EXECUTIVE_PASSWORD }}
-      DEMO_COFOUNDER_PASSWORD: ${{ secrets.DEMO_COFOUNDER_PASSWORD }}
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: "3.12"
           cache: pip
           cache-dependency-path: backend/pyproject.toml
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
 
-      - name: Install dependencies
-        run: pip install -e .
+  deploy:
+    name: Deploy to Azure VM via SSH
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: production
 
-      # Guard: fail fast if DATABASE_URL secret is missing or empty
-      - name: Check DATABASE_URL is set
-        run: |
-          if [ -z "$DATABASE_URL" ]; then
-            echo "❌ DATABASE_URL is empty. Add NEON_PROD_DATABASE_URL to GitHub repo secrets."
-            exit 1
-          fi
-          echo "✅ DATABASE_URL is set ($(echo $DATABASE_URL | cut -d'@' -f2 | cut -d'/' -f1))"
-
-      # Run migrations against the PRODUCTION Neon database before the new code goes live
-      - name: Run Alembic migrations (prod)
-        run: alembic upgrade head
-
-      # ── Export requirements.txt so Azure Oryx installs packages on the server ──
-      - name: Export requirements.txt
-        run: pip freeze > requirements.txt
-
-      # ── Package the backend for Azure App Service zip deploy ─────────────
-      - name: Zip backend for deployment
-        run: |
-          zip -r ../backend-deploy.zip . \
-            --exclude "*.pyc" \
-            --exclude "*/__pycache__/*" \
-            --exclude "*/.pytest_cache/*" \
-            --exclude "*/tests/*" \
-            --exclude ".git/*"
-
-      # ── Deploy to Azure App Service ───────────────────────────────────────
-      # Secret required: AZURE_WEBAPP_PUBLISH_PROFILE
-      #   Azure Portal → App Services → recon-desk → Overview → Download publish profile
-      #   Add the entire XML contents as a GitHub secret named AZURE_WEBAPP_PUBLISH_PROFILE
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          app-name: recon-desk
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: backend-deploy.zip
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          port: ${{ secrets.AZURE_VM_PORT || 22 }}
+          script: |
+            set -e
 
+            APP_DIR="${HOME}/recon-desk"
+
+            echo "==> Setting up repository on VM..."
+            if [ ! -d "$APP_DIR/.git" ]; then
+              echo "Cloning repository..."
+              git clone https://github.com/${{ github.repository }}.git "$APP_DIR"
+              cd "$APP_DIR"
+            else
+              echo "Pulling latest code from main..."
+              cd "$APP_DIR"
+              git fetch origin main
+              git reset --hard origin/main
+            fi
+
+            echo "==> Writing production environment variables..."
+            cat << 'EOF' > "$APP_DIR/.env"
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            FRONTEND_ORIGIN=${{ secrets.FRONTEND_ORIGIN }}
+            DEMO_EXECUTIVE_PASSWORD=${{ secrets.DEMO_EXECUTIVE_PASSWORD }}
+            DEMO_COFOUNDER_PASSWORD=${{ secrets.DEMO_COFOUNDER_PASSWORD }}
+            REGISTRATION_INVITE_CODE=${{ secrets.REGISTRATION_INVITE_CODE }}
+            EOF
+
+            echo "==> Detecting Docker Compose command..."
+            if docker compose version >/dev/null 2>&1; then
+              COMPOSE_CMD="docker compose"
+            elif command -v docker-compose >/dev/null 2>&1; then
+              COMPOSE_CMD="docker-compose"
+            else
+              echo "Error: Docker / Docker Compose is not installed on the VM."
+              exit 1
+            fi
+
+            echo "==> Building and starting backend container..."
+            $COMPOSE_CMD -f docker-compose.prod.yml down || true
+            $COMPOSE_CMD -f docker-compose.prod.yml build
+            $COMPOSE_CMD -f docker-compose.prod.yml up -d
+
+            echo "==> Checking running container..."
+            sleep 4
+            docker ps --filter name=recon-desk-backend
+            curl -fsS --retry 10 --retry-delay 3 --retry-connrefused http://localhost:8000/health
+            echo "==> Backend deployed successfully!"

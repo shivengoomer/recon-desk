@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: recon-desk-backend:latest
+    container_name: recon-desk-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      DEMO_EXECUTIVE_PASSWORD: ${DEMO_EXECUTIVE_PASSWORD}
+      DEMO_COFOUNDER_PASSWORD: ${DEMO_COFOUNDER_PASSWORD}
+      REGISTRATION_INVITE_CODE: ${REGISTRATION_INVITE_CODE}
+

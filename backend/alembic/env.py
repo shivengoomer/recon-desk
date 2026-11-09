@@ -9,8 +9,7 @@ target_metadata = Base.metadata
 
 if not settings.database_url:
     raise RuntimeError(
-        "DATABASE_URL is not set. "
-        "Add NEON_PROD_DATABASE_URL to GitHub Secrets and ensure it maps to DATABASE_URL in the workflow."
+        "DATABASE_URL is not set. Ensure the DATABASE_URL environment variable or secret is configured."
     )
 
 
