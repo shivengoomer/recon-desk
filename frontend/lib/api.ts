@@ -42,7 +42,15 @@ async function request(path: string, init: RequestInit = {}): Promise<Response> 
   try {
     res = await fetch(`${BASE}${path}`, { ...init, headers });
   } catch {
-    throw new ApiError(0, "Cannot reach the server. Check your connection and try again.");
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("server-offline", { detail: { reason: "network_error" } }));
+    }
+    throw new ApiError(0, "Cannot reach the server. The server might be sleeping.");
+  }
+  if (res.status >= 502 && res.status <= 504) {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("server-offline", { detail: { reason: "gateway_down", status: res.status } }));
+    }
   }
   if (res.status === 401 && !path.startsWith("/api/auth/login")) {
     tokenStore.clear();

@@ -3,6 +3,7 @@ import { DM_Mono, Inter, Titillium_Web } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import { ToastProvider } from "@/components/ui/toast";
+import { ServerWakeupModal } from "@/components/ui/server-wakeup-modal";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const display = Titillium_Web({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-display", display: "swap" });
@@ -19,7 +20,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${sans.variable} ${display.variable} ${mono.variable}`}>
       <body className="min-h-screen">
         <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            {children}
+            <ServerWakeupModal />
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>
