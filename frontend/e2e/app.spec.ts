@@ -104,7 +104,7 @@ test("claims: list, update a claim with a note, export evidence", async ({ page 
   await expect(page.getByText("Claim updated")).toBeVisible();
   // restore the claim so test runs do not change the demo data
   await page.evaluate(async ({ url }) => {
-    const token = sessionStorage.getItem("recon.token");
+    const token = JSON.parse(localStorage.getItem("recon.token") ?? "{}").token;
     await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ status: "open", note: "" }) });
   }, { url: saved.url() });
 });
@@ -140,7 +140,7 @@ test("role access: executive cannot reach audit log or edit rate cards; co-found
   await page.goto("/rate-cards");
   await expect(page.getByRole("heading", { name: "Rate cards" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add rate card" })).toHaveCount(0);
-  await page.evaluate(() => sessionStorage.clear());
+  await page.evaluate(() => localStorage.clear());
 
   await login(page, FOUNDER);
   await page.goto("/rate-cards");
