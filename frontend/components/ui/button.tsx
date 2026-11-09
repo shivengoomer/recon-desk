@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import type { ButtonHTMLAttributes } from "react";
+import { LogoLoader } from "./logo-loader";
 
 type Variant = "primary" | "secondary" | "mint" | "danger";
 
@@ -26,7 +27,7 @@ export function Button({ variant = "primary", loading, className, disabled, chil
         className,
       )}
     >
-      {loading && <span aria-hidden className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />}
+      {loading && <LogoLoader size={18} />}
       {children}
     </button>
   );

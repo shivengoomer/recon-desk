@@ -53,9 +53,10 @@ const config: Config = {
       },
       keyframes: {
         shimmer: { "100%": { transform: "translateX(100%)" } },
+        "logo-spin": { "0%": { transform: "rotate(0deg) scale(1)" }, "50%": { transform: "rotate(180deg) scale(0.88)" }, "100%": { transform: "rotate(360deg) scale(1)" } },
         marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
       },
-      animation: { shimmer: "shimmer 1.4s infinite", marquee: "marquee 38s linear infinite" },
+      animation: { "logo-spin": "logo-spin 1.3s cubic-bezier(0.65, 0, 0.35, 1) infinite", shimmer: "shimmer 1.4s infinite", marquee: "marquee 38s linear infinite" },
     },
   },
   plugins: [],

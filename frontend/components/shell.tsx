@@ -9,6 +9,7 @@ import { MatchProvider, timeAgo, useMatch } from "@/lib/match";
 import { num } from "@/lib/format";
 import type { Dashboard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { LogoLoader, LogoLoading } from "@/components/ui/logo-loader";
 import { CommandPalette } from "@/components/command-palette";
 import { Backdrop } from "@/components/backdrop";
 import {
@@ -20,7 +21,6 @@ import {
   LogOut,
   Percent,
   Play,
-  RefreshCw,
   ScrollText,
   Search,
   Upload,
@@ -59,9 +59,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   if (!ready || !user) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-body-sm text-body-mid" role="status">
-        Loading…
-      </div>
+      <LogoLoading label="Loading Recon Desk" />
     );
   }
 
@@ -310,7 +308,7 @@ function Frame({ children }: { children: React.ReactNode }) {
                   aria-hidden
                   className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink/15 text-ink"
                 >
-                  <RefreshCw size={12} className="animate-spin text-ink" />
+                  <LogoLoader size={12} className="text-ink" />
                 </span>
               ) : (
                 <span
